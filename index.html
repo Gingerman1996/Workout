@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals with Calm Accents -->
-    <!-- Application Structure Plan: A tab-based Single Page Application (SPA) structure was chosen for optimal user experience. This design allows the user to easily navigate between different aspects of their comprehensive plan—Calendar, Workouts, Nutrition, and FAQs—without leaving the page. This is more intuitive than a long, scrolling document. The 'Calendar' view provides a high-level weekly overview, while other tabs offer detailed information. This structure directly addresses the user's need for clarity and organization by compartmentalizing complex information into digestible sections. -->
+    <!-- Application Structure Plan: A tab-based Single Page Application (SPA) structure was chosen for optimal user experience. This design allows the user to easily navigate between different aspects of their comprehensive plan—Calendar, Workouts, Nutrition, and FAQs—withoutleaving the page. This is more intuitive than a long, scrolling document. The 'Calendar' view provides a high-level weekly overview, while other tabs offer detailed information. This structure directly addresses the user's need for clarity and organization by compartmentalizing complex information into digestible sections. -->
     <!-- Visualization & Content Choices: The plan uses structured HTML tables for workout and nutrition plans for clarity. Interactive tabs (HTML/JS) are used for navigation. Collapsible sections (details/summary tags) are used for stretching routines to avoid information overload. A dedicated FAQ section directly answers user-specific questions, which is more effective than embedding answers into a long narrative. A key visualization is the weekly calendar, built with Tailwind CSS Grid, which visually represents the user's entire week at a glance. This is more user-friendly than a text-based schedule. No charts are needed for this report type. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -67,6 +67,10 @@
             color: #4A4A4A;
             align-self: flex-start;
         }
+        #notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -85,6 +89,8 @@
             <button class="tab-btn active text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('calendar')">🗓️ ปฏิทิน</button>
             <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('workout')">💪 ออกกำลังกาย</button>
             <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('nutrition')">🥗 โภชนาการ</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('food-database')">📦 คลังอาหาร</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('saved-recipes')">💾 เมนูที่บันทึก</button>
             <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('faq')">❓ FAQ</button>
             <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('ai-assistant')">🤖 คุยกับ AI</button>
         </nav>
@@ -227,7 +233,7 @@
                     <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">แผนโภชนาการและสูตรอาหาร</h2>
                     <div class="grid md:grid-cols-2 gap-8">
                         <div>
-                            <h3 class="font-bold text-xl mb-3">เป้าหมายสารอาหาร (Macro)</h3>
+                            <h3 class="font-bold text-xl mb-3">เป้าหมายสารอาหารหลัก (Macro)</h3>
                             <div class="grid grid-cols-2 gap-4 text-center">
                                 <div class="bg-blue-50 p-4 rounded-lg">
                                     <h4 class="font-semibold">วันฝึก (4 วัน)</h4>
@@ -240,27 +246,75 @@
                                     <div class="text-xs mt-2">P: 132g, C: 218g, F: 67g</div>
                                 </div>
                             </div>
-                            <h3 class="font-bold text-xl mb-3 mt-6">ตัวอย่างแผนการกิน</h3>
-                            <p class="text-sm text-gray-600 mb-2"><strong>มื้อวันฝึก:</strong> 1.ข้าวโอ๊ต 80ก, ไข่ 3 ฟอง | 2.อกไก่ 200ก, ข้าว 250ก | 3.กล้วย, ทูน่า 1 กระป๋อง | 4.อกไก่ 200ก, ข้าว 250ก</p>
-                            <p class="text-sm text-gray-600"><strong>มื้อวันพัก:</strong> 1.ข้าวโอ๊ต 60ก, ไข่ 4 ฟอง | 2.อกไก่ 200ก, ข้าว 150ก | 3.อกไก่ 200ก, ข้าว 150ก | 4.ทูน่า 1 กระป๋อง</p>
+                            <div class="mt-6">
+                                <h3 class="font-bold text-xl mb-3">เป้าหมายสารอาหารรอง (ตามคำแนะนำสากล)</h3>
+                                <div class="bg-gray-50 p-4 rounded-lg border text-sm space-y-2">
+                                    <div class="flex justify-between"><span><strong>น้ำตาล (Added Sugar):</strong></span> <span>ไม่เกิน 25-30 กรัม/วัน</span></div>
+                                    <div class="flex justify-between"><span><strong>โซเดียม (Sodium):</strong></span> <span>ไม่เกิน 2,300 มก./วัน</span></div>
+                                    <div class="flex justify-between"><span><strong>คอเลสเตอรอล:</strong></span> <span>ไม่เกิน 300 มก./วัน</span></div>
+                                </div>
+                            </div>
                         </div>
                         <div>
-                            <h3 class="font-bold text-xl mb-3">ไอเดียเมนูปลาทูน่า (1 กระป๋อง)</h3>
+                            <h3 class="font-bold text-xl mb-3">ไอเดียเมนูคลีนทำง่าย</h3>
                             <div class="space-y-3 text-sm">
-                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ยำทูน่าสมุนไพร</p><p class="text-gray-600">ทูน่าในน้ำแร่, หอมแดง, ตะไคร้, ใบสะระแหน่, พริก, มะนาว</p></div>
-                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ลาบทูน่าข้าวคั่ว</p><p class="text-gray-600">ทูน่าในน้ำแร่, ข้าวคั่ว, พริกป่น, น้ำปลา, มะนาว, หอมแดง</p></div>
-                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ทูน่าคั่วกลิ้ง</p><p class="text-gray-600">ทูน่าคั่วในกระทะกับพริกแกงใต้และใบมะกรูด (ไม่ใช้น้ำมัน)</p></div>
+                                <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <p class="font-semibold">อกไก่ย่างตะไคร้</p>
+                                    <p class="text-gray-600">หมักอกไก่กับตะไคร้ซอย กระเทียม พริกไทย และซีอิ๊วขาวเล็กน้อย แล้วนำไปย่างหรือนาบในกระทะเทฟลอน</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <p class="font-semibold">ไข่ตุ๋นทรงเครื่อง</p>
+                                    <p class="text-gray-600">ใช้ไข่ 2-3 ฟอง ตีกับน้ำ ปรุงรสด้วยซีอิ๊วขาว ใส่เนื้ออกไก่สับหรือกุ้ง แล้วนำไปนึ่งจนสุก โรยหน้าด้วยผักชี</p>
+                                </div>
+                                 <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <p class="font-semibold">กะเพราอกไก่ (สูตรคลีน)</p>
+                                    <p class="text-gray-600">ผัดอกไก่สับกับพริกกระเทียมในกระทะโดยใช้น้ำแทนน้ำมัน ปรุงรสด้วยน้ำปลาและซีอิ๊วเล็กน้อย ใส่ใบกะเพรา</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <p class="font-semibold">ยำทูน่าสมุนไพร</p>
+                                    <p class="text-gray-600">ใช้ทูน่าในน้ำแร่ คลุกเคล้ากับหอมแดง ตะไคร้ ใบสะระแหน่ ปรุงรสด้วยพริกและมะนาว</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!-- Gemini Recipe Generator -->
                     <div class="mt-8 pt-6 border-t">
-                        <h3 class="font-bold text-xl mb-3">✨ ผู้ช่วยคิดสูตรอาหาร AI</h3>
-                        <p class="text-gray-600 mb-4 text-sm">มีวัตถุดิบอะไรในตู้เย็น? บอกเรา แล้ว AI จะสร้างสรรค์เมนูอร่อยเพื่อสุขภาพให้คุณ!</p>
-                        <textarea id="ingredients-input" class="w-full p-2 border rounded-md" rows="3" placeholder="เช่น: อกไก่, บรอกโคลี, ไข่, ข้าวกล้อง..."></textarea>
+                        <h3 class="font-bold text-xl mb-3">✨ ผู้ช่วยคิดสูตรอาหาร AI (พร้อมคำนวณโภชนาการ)</h3>
+                        <p class="text-gray-600 mb-4 text-sm">พิมพ์วัตถุดิบที่คุณมี (เช่น อกไก่ 200g) AI จะใช้ข้อมูลจากคลังอาหารของคุณมาคำนวณโภชนาการให้!</p>
+                        <textarea id="ingredients-input" class="w-full p-2 border rounded-md" rows="3" placeholder="เช่น: อกไก่ 200g, ข้าวกล้อง 150g, บรอกโคลี..."></textarea>
                         <button id="generate-recipe-btn" class="mt-2 bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">สร้างสูตรอาหาร</button>
                         <div id="recipe-loader" class="hidden justify-center items-center mt-4"><div class="loader"></div></div>
-                        <div id="recipe-result" class="mt-4 p-4 bg-gray-50 rounded-lg border hidden whitespace-pre-wrap"></div>
+                        <div id="recipe-result" class="mt-4 p-4 bg-gray-50 rounded-lg border hidden"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Food Database Section -->
+            <section id="food-database" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                        <h2 class="text-2xl font-bold text-[#C5A47E]">📦 คลังอาหารส่วนตัว</h2>
+                        <div class="flex gap-2">
+                             <label for="upload-label-btn" class="cursor-pointer bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">
+                                🖼️ เพิ่มจากรูปฉลาก
+                             </label>
+                             <input type="file" id="upload-label-btn" class="hidden" accept="image/*">
+                            <button id="add-food-btn" class="bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">+ เพิ่มรายการใหม่</button>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">จัดการฐานข้อมูลอาหารและผลิตภัณฑ์ของคุณเอง เพื่อการติดตามโภชนาการที่แม่นยำยิ่งขึ้น</p>
+                    <div id="food-database-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Custom food items will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Saved Recipes Section -->
+            <section id="saved-recipes" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">💾 เมนูที่บันทึกไว้</h2>
+                    <div id="saved-recipes-container" class="space-y-4">
+                        <!-- Saved recipes will be injected here -->
                     </div>
                 </div>
             </section>
@@ -318,7 +372,7 @@
     </div>
 
     <!-- Modal for API Key Setup -->
-    <div id="apikey-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
+    <div id="apikey-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-[#C5A47E]">🔑 ตั้งค่า API Key</h3>
@@ -338,7 +392,7 @@
     </div>
 
     <!-- Modal for Workout Suggestion -->
-    <div id="suggestion-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
+    <div id="suggestion-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-[#C5A47E]">✨ ท่าออกกำลังกายทางเลือก</h3>
@@ -349,7 +403,128 @@
         </div>
     </div>
 
+    <!-- Modal for Choices -->
+    <div id="choice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <h3 id="choice-title" class="text-lg font-bold text-gray-800 mb-4">Title</h3>
+            <p id="choice-message" class="text-gray-600 mb-6">Message</p>
+            <div id="choice-buttons" class="flex justify-end space-x-2 flex-wrap gap-2">
+                <!-- Buttons will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Input -->
+    <div id="input-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
+            <h3 id="input-title" class="text-lg font-bold text-gray-800 mb-4">Title</h3>
+            <p id="input-message" class="text-gray-600 mb-4">Message</p>
+            <input type="text" id="input-field" class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#C5A47E]">
+            <div class="flex justify-end space-x-2 mt-6">
+                <button id="input-cancel-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition-colors">ยกเลิก</button>
+                <button id="input-ok-btn" class="bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit Food -->
+    <div id="food-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <h3 id="food-modal-title" class="text-xl font-bold text-[#C5A47E] mb-4">เพิ่มรายการอาหารใหม่</h3>
+            <form id="food-form" class="space-y-4">
+                <input type="hidden" id="food-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label for="food-name" class="block text-sm font-medium text-gray-700">ชื่ออาหาร</label>
+                        <input type="text" id="food-name" class="mt-1 w-full p-2 border rounded-md" required>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-5 gap-2">
+                        <div class="col-span-3">
+                            <label for="food-serving-amount" class="block text-sm font-medium text-gray-700">หนึ่งหน่วยบริโภค</label>
+                            <input type="number" id="food-serving-amount" step="any" class="mt-1 w-full p-2 border rounded-md" required placeholder="เช่น 180">
+                        </div>
+                        <div class="col-span-2">
+                            <label for="food-serving-unit" class="block text-sm font-medium text-gray-700">หน่วย</label>
+                            <input type="text" id="food-serving-unit" class="mt-1 w-full p-2 border rounded-md" required placeholder="เช่น g, ml, ซอง">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="food-calories" class="block text-sm font-medium text-gray-700">พลังงาน (kcal)</label>
+                        <input type="number" id="food-calories" step="any" class="mt-1 w-full p-2 border rounded-md" required>
+                    </div>
+                    <div>
+                        <label for="food-protein" class="block text-sm font-medium text-gray-700">โปรตีน (g)</label>
+                        <input type="number" id="food-protein" step="any" class="mt-1 w-full p-2 border rounded-md" required>
+                    </div>
+                    <div>
+                        <label for="food-carbs" class="block text-sm font-medium text-gray-700">คาร์โบไฮเดรต (g)</label>
+                        <input type="number" id="food-carbs" step="any" class="mt-1 w-full p-2 border rounded-md" required>
+                    </div>
+                    <div>
+                        <label for="food-fat" class="block text-sm font-medium text-gray-700">ไขมัน (g)</label>
+                        <input type="number" id="food-fat" step="any" class="mt-1 w-full p-2 border rounded-md" required>
+                    </div>
+                    <div>
+                        <label for="food-sugar" class="block text-sm font-medium text-gray-700">น้ำตาล (g)</label>
+                        <input type="number" id="food-sugar" step="any" class="mt-1 w-full p-2 border rounded-md">
+                    </div>
+                     <div>
+                        <label for="food-fiber" class="block text-sm font-medium text-gray-700">ใยอาหาร (g)</label>
+                        <input type="number" id="food-fiber" step="any" class="mt-1 w-full p-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="food-sodium" class="block text-sm font-medium text-gray-700">โซเดียม (mg)</label>
+                        <input type="number" id="food-sodium" step="any" class="mt-1 w-full p-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="food-cholesterol" class="block text-sm font-medium text-gray-700">คอเลสเตอรอล (mg)</label>
+                        <input type="number" id="food-cholesterol" step="any" class="mt-1 w-full p-2 border rounded-md">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button" id="food-cancel-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300">ยกเลิก</button>
+                    <button type="submit" class="bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Food Detail View -->
+    <div id="food-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="food-detail-name" class="text-xl font-bold text-[#C5A47E]">ชื่ออาหาร</h3>
+                <button id="food-detail-close-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-md mb-4">
+                <p class="text-sm text-gray-600">ปริมาณต่อหนึ่งหน่วยบริโภค: <span id="food-detail-serving" class="font-medium"></span></p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">พลังงาน</p><p id="food-detail-calories" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">โปรตีน</p><p id="food-detail-protein" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">คาร์โบไฮเดรต</p><p id="food-detail-carbs" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">ไขมัน</p><p id="food-detail-fat" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">น้ำตาล</p><p id="food-detail-sugar" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">ใยอาหาร</p><p id="food-detail-fiber" class="font-bold"></p></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-center mt-4">
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">โซเดียม</p><p id="food-detail-sodium" class="font-bold"></p></div>
+                <div class="bg-gray-100 p-2 rounded-md"><p class="text-xs text-gray-500">คอเลสเตอรอล</p><p id="food-detail-cholesterol" class="font-bold"></p></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Custom Notification -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg transition-transform duration-300 transform translate-y-20 opacity-0 z-50">
+        <p id="notification-message"></p>
+    </div>
+
+
     <script>
+        // Global state for current recipe
+        let currentRecipeData = null;
+
         // API Key Management
         const apikeyModal = document.getElementById('apikey-modal');
         const setupApiKeyBtn = document.getElementById('setup-apikey-btn');
@@ -357,55 +532,26 @@
         const saveApiKeyBtn = document.getElementById('save-apikey-btn');
         const apikeyInput = document.getElementById('apikey-input');
 
-        function showApiKeyModal() {
-            apikeyModal.classList.remove('hidden');
-            const currentApiKey = getApiKey();
-            if (currentApiKey) {
-                apikeyInput.value = currentApiKey;
-            }
-        }
-
-        function hideApiKeyModal() {
-            apikeyModal.classList.add('hidden');
-        }
+        function showApiKeyModal() { apikeyModal.classList.remove('hidden'); const key = getApiKey(); if(key) apikeyInput.value = key; }
+        function hideApiKeyModal() { apikeyModal.classList.add('hidden'); }
 
         setupApiKeyBtn.addEventListener('click', showApiKeyModal);
         closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
-        apikeyModal.addEventListener('click', (e) => {
-            if (e.target === apikeyModal) hideApiKeyModal();
-        });
+        apikeyModal.addEventListener('click', (e) => { if (e.target === apikeyModal) hideApiKeyModal(); });
 
         saveApiKeyBtn.addEventListener('click', async () => {
             const apiKey = apikeyInput.value.trim();
-            if (!apiKey) {
-                alert('กรุณาใส่ API Key');
-                return;
-            }
-
-            // Test API key before saving
+            if (!apiKey) { showNotification('กรุณาใส่ API Key', true); return; }
             try {
-                const testPrompt = "Hello";
                 const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(testUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: testPrompt }] }]
-                    })
-                });
-
+                const response = await fetch(testUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: "Hello" }] }] }) });
                 const data = await response.json();
-                
-                // ตรวจสอบว่าการเรียก API สำเร็จและได้ผลลัพธ์ที่ถูกต้อง
-                if (!response.ok || !data.candidates || !data.candidates[0]?.content?.parts?.length) {
-                    throw new Error('Invalid API Key');
-                }
-
+                if (!response.ok || !data.candidates) throw new Error('Invalid API Key');
                 localStorage.setItem('geminiApiKey', apiKey);
                 hideApiKeyModal();
-                alert('บันทึก API Key เรียบร้อยแล้ว');
+                showNotification('บันทึก API Key เรียบร้อยแล้ว');
             } catch (error) {
-                alert('API Key ไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง');
+                showNotification('API Key ไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง', true);
             }
         });
 
@@ -418,84 +564,568 @@
             document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
             contents.forEach(content => content.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
+            if (tabName === 'saved-recipes') renderSavedRecipes();
+            if (tabName === 'food-database') renderCustomFoods();
         }
 
         // Get API key from localStorage
-        function getApiKey() {
-            return localStorage.getItem('geminiApiKey');
-        }
+        function getApiKey() { return localStorage.getItem('geminiApiKey'); }
 
-        // Check if API key exists
-        function checkApiKey() {
-            const apiKey = getApiKey();
-            if (!apiKey) {
-                showApiKeyModal();
-                return false;
-            }
-            return true;
-        }
-
-        async function callGemini(prompt) {
+        async function callGemini(prompt, imageBase64 = null, mimeType = null) {
             const apiKey = getApiKey();
             if (!apiKey) {
                 showApiKeyModal();
                 return "กรุณาตั้งค่า API Key ก่อนใช้งาน";
             }
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+            
+            let parts = [{ text: prompt }];
+            if (imageBase64 && mimeType) {
+                parts.push({
+                    inlineData: {
+                        mimeType: mimeType,
+                        data: imageBase64
+                    }
                 });
-                
+            }
+
+            const payload = { contents: [{ parts: parts }] };
+
+            try {
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const result = await response.json();
-                
                 if (!response.ok) {
-                    // ถ้า API key ไม่ถูกต้อง
-                    if (response.status === 400 || response.status === 401) {
-                        localStorage.removeItem('geminiApiKey'); // ลบ API key ที่ไม่ถูกต้อง
+                    if ([400, 401, 403].includes(response.status)) {
+                        localStorage.removeItem('geminiApiKey');
                         showApiKeyModal();
                         return "API Key ไม่ถูกต้อง กรุณาตั้งค่า API Key ใหม่";
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
-                if (result.candidates && result.candidates[0]?.content?.parts?.length > 0) {
-                    return result.candidates[0].content.parts[0].text;
-                }
+                if (result.candidates && result.candidates[0]?.content?.parts?.length > 0) return result.candidates[0].content.parts[0].text;
                 return "ขออภัย, ไม่สามารถสร้างคำตอบได้ในขณะนี้";
             } catch (error) {
                 console.error("Gemini API call failed:", error);
-                // ถ้าเป็นปัญหาเรื่องการเชื่อมต่อ
-                if (error.message.includes('Failed to fetch')) {
-                    return "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่อีกครั้ง";
-                }
                 return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง";
             }
         }
+        
+        // --- Custom Modals & Notification ---
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const choiceModal = document.getElementById('choice-modal');
+        const choiceTitle = document.getElementById('choice-title');
+        const choiceMessage = document.getElementById('choice-message');
+        const choiceButtons = document.getElementById('choice-buttons');
+        const inputModal = document.getElementById('input-modal');
+        const inputTitle = document.getElementById('input-title');
+        const inputMessage = document.getElementById('input-message');
+        const inputField = document.getElementById('input-field');
+        const inputOkBtn = document.getElementById('input-ok-btn');
+        const inputCancelBtn = document.getElementById('input-cancel-btn');
+        let inputCallback = null;
 
-        // Feature 1: Recipe Generator
+        function showNotification(message, isError = false) {
+            notificationMessage.textContent = message;
+            notification.classList.toggle('bg-red-600', isError);
+            notification.classList.toggle('bg-gray-800', !isError);
+            notification.classList.add('show');
+            setTimeout(() => { notification.classList.remove('show'); }, 3000);
+        }
+
+        function showChoiceModal(title, message, buttons) {
+            choiceTitle.textContent = title;
+            choiceMessage.textContent = message;
+            choiceButtons.innerHTML = '';
+            buttons.forEach(btnInfo => {
+                const button = document.createElement('button');
+                button.textContent = btnInfo.text;
+                button.className = btnInfo.className;
+                button.onclick = () => {
+                    choiceModal.classList.add('hidden');
+                    if (btnInfo.callback) btnInfo.callback();
+                };
+                choiceButtons.appendChild(button);
+            });
+            choiceModal.classList.remove('hidden');
+        }
+
+        function showInputModal(title, message, placeholder, callback) {
+            inputTitle.textContent = title;
+            inputMessage.textContent = message;
+            inputField.value = '';
+            inputField.placeholder = placeholder;
+            inputCallback = callback;
+            inputModal.classList.remove('hidden');
+            inputField.focus();
+        }
+
+        inputOkBtn.addEventListener('click', () => {
+            if (inputCallback) inputCallback(inputField.value.trim());
+            inputModal.classList.add('hidden');
+        });
+        inputCancelBtn.addEventListener('click', () => {
+            inputModal.classList.add('hidden');
+        });
+
+        // --- Food Database Feature ---
+        const FOOD_DB_KEY = 'fitnessPlanFoodDatabase';
+        const foodModal = document.getElementById('food-modal');
+        const foodForm = document.getElementById('food-form');
+        const addFoodBtn = document.getElementById('add-food-btn');
+        const foodCancelBtn = document.getElementById('food-cancel-btn');
+        const uploadLabelBtn = document.getElementById('upload-label-btn');
+        const foodDetailModal = document.getElementById('food-detail-modal');
+        
+        function getCustomFoods() { return JSON.parse(localStorage.getItem(FOOD_DB_KEY)) || []; }
+        function saveCustomFoods(foods) { localStorage.setItem(FOOD_DB_KEY, JSON.stringify(foods)); }
+
+        addFoodBtn.addEventListener('click', () => {
+            foodForm.reset();
+            document.getElementById('food-id').value = '';
+            document.getElementById('food-modal-title').textContent = 'เพิ่มรายการอาหารใหม่';
+            foodModal.classList.remove('hidden');
+        });
+        foodCancelBtn.addEventListener('click', () => foodModal.classList.add('hidden'));
+
+        foodForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const foodId = document.getElementById('food-id').value;
+            const servingAmount = document.getElementById('food-serving-amount').value;
+            const servingUnit = document.getElementById('food-serving-unit').value;
+            
+            const foodData = {
+                name: document.getElementById('food-name').value,
+                serving: `${servingAmount} ${servingUnit}`,
+                calories: document.getElementById('food-calories').value,
+                protein: document.getElementById('food-protein').value,
+                carbs: document.getElementById('food-carbs').value,
+                fat: document.getElementById('food-fat').value,
+                sugar: document.getElementById('food-sugar').value || 0,
+                fiber: document.getElementById('food-fiber').value || 0,
+                sodium: document.getElementById('food-sodium').value || 0,
+                cholesterol: document.getElementById('food-cholesterol').value || 0,
+            };
+
+            let foods = getCustomFoods();
+            if (foodId) { // Editing existing food
+                foods = foods.map(food => food.id === parseInt(foodId) ? { ...food, ...foodData } : food);
+                showNotification(`แก้ไข "${foodData.name}" เรียบร้อยแล้ว`);
+            } else { // Adding new food
+                foodData.id = Date.now();
+                foods.push(foodData);
+                showNotification(`เพิ่ม "${foodData.name}" ในคลังอาหารแล้ว`);
+            }
+            
+            saveCustomFoods(foods);
+            renderCustomFoods();
+            foodModal.classList.add('hidden');
+        });
+        
+        uploadLabelBtn.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64String = reader.result.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
+                showNotification('กำลังวิเคราะห์รูปภาพ...');
+                
+                const prompt = `Analyze the provided Thai nutrition label image. Extract ONLY numerical values without units. If a value is not found, use 0. Format your response EXACTLY like this example, replacing the values:
+{
+  "name": "Product Name",
+  "serving": "100 g",
+  "calories": 150,
+  "protein": 5,
+  "carbs": 20,
+  "fat": 8,
+  "sugar": 2,
+  "fiber": 1,
+  "sodium": 400,
+  "cholesterol": 0
+}
+
+Look for these Thai terms:
+- ชื่อผลิตภัณฑ์ or product name
+- หนึ่งหน่วยบริโภค (serving size)
+- พลังงานทั้งหมด (total energy/calories)
+- ไขมันทั้งหมด (total fat)
+- โปรตีน (protein)
+- คาร์โบไฮเดรตทั้งหมด (total carbohydrate)
+- น้ำตาล (sugars)
+- ใยอาหาร (dietary fiber)
+- โซเดียม (sodium)
+- คอเลสเตอรอล (cholesterol)`;
+
+                const result = await callGemini(prompt, base64String, file.type);
+                
+                try {
+                    // Clean the response to ensure we only get JSON
+                    const cleanResult = result.replace(/[^\{\}":,.\d\s\[\]a-zA-Z-]/g, '')
+                                            .replace(/\s+/g, ' ')
+                                            .trim();
+                    
+                    // Find the JSON object in the cleaned response
+                    const jsonMatch = cleanResult.match(/\{.*\}/);
+                    if (!jsonMatch) {
+                        console.error("No valid JSON found in response:", cleanResult);
+                        throw new Error("ไม่พบข้อมูลโภชนาการในรูปภาพ");
+                    }
+                    
+                    let data;
+                    try {
+                        data = JSON.parse(jsonMatch[0]);
+                    } catch (parseError) {
+                        console.error("JSON parse error:", parseError, "Raw JSON:", jsonMatch[0]);
+                        throw new Error("ข้อมูลที่ได้จากรูปภาพไม่ถูกต้อง");
+                    }
+                    
+                    const servingText = data.serving || '';
+                    const match = servingText.match(/^([\d\.\/]+)\s*(.*)$/);
+                    if (match) {
+                        document.getElementById('food-serving-amount').value = match[1];
+                        document.getElementById('food-serving-unit').value = match[2].trim();
+                    } else {
+                        document.getElementById('food-serving-amount').value = 1;
+                        document.getElementById('food-serving-unit').value = servingText;
+                    }
+
+                    document.getElementById('food-name').value = data.name || '';
+                    document.getElementById('food-calories').value = data.calories || '';
+                    document.getElementById('food-protein').value = data.protein || '';
+                    document.getElementById('food-carbs').value = data.carbs || '';
+                    document.getElementById('food-fat').value = data.fat || '';
+                    document.getElementById('food-sugar').value = data.sugar || 0;
+                    document.getElementById('food-fiber').value = data.fiber || 0;
+                    document.getElementById('food-sodium').value = data.sodium || 0;
+                    document.getElementById('food-cholesterol').value = data.cholesterol || 0;
+                    
+                    document.getElementById('food-id').value = '';
+                    document.getElementById('food-modal-title').textContent = 'เพิ่มรายการอาหารใหม่';
+                    foodModal.classList.remove('hidden');
+                    showNotification('ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบข้อมูล');
+
+                } catch (error) {
+                    console.error("Error parsing nutrition label JSON:", error, "Raw response:", result);
+                    showNotification('ไม่สามารถดึงข้อมูลจากรูปภาพได้ กรุณาลองใหม่', true);
+                }
+            };
+            reader.readAsDataURL(file);
+            e.target.value = ''; // Reset file input
+        });
+
+
+        function deleteCustomFood(foodId) {
+            let foods = getCustomFoods();
+            foods = foods.filter(food => food.id !== foodId);
+            saveCustomFoods(foods);
+            renderCustomFoods();
+            showNotification('ลบรายการอาหารเรียบร้อยแล้ว');
+        }
+
+        function showEditFoodModal(foodId) {
+            const foods = getCustomFoods();
+            const food = foods.find(f => f.id === foodId);
+            if (!food) return;
+
+            document.getElementById('food-id').value = food.id;
+            document.getElementById('food-modal-title').textContent = 'แก้ไขรายการอาหาร';
+
+            const servingMatch = food.serving.match(/^([\d\.\/]+)\s*(.*)$/);
+            if (servingMatch) {
+                document.getElementById('food-serving-amount').value = servingMatch[1];
+                document.getElementById('food-serving-unit').value = servingMatch[2].trim();
+            } else {
+                document.getElementById('food-serving-amount').value = 1;
+                document.getElementById('food-serving-unit').value = food.serving;
+            }
+
+            document.getElementById('food-name').value = food.name;
+            document.getElementById('food-calories').value = food.calories;
+            document.getElementById('food-protein').value = food.protein;
+            document.getElementById('food-carbs').value = food.carbs;
+            document.getElementById('food-fat').value = food.fat;
+            document.getElementById('food-sugar').value = food.sugar;
+            document.getElementById('food-fiber').value = food.fiber;
+            document.getElementById('food-sodium').value = food.sodium;
+            document.getElementById('food-cholesterol').value = food.cholesterol;
+
+            foodModal.classList.remove('hidden');
+        }
+
+        function showFoodDetails(foodId) {
+            const foods = getCustomFoods();
+            const food = foods.find(f => f.id === foodId);
+            if (!food) return;
+
+            document.getElementById('food-detail-name').textContent = food.name;
+            document.getElementById('food-detail-serving').textContent = food.serving;
+            document.getElementById('food-detail-calories').textContent = `${food.calories} kcal`;
+            document.getElementById('food-detail-protein').textContent = `${food.protein} g`;
+            document.getElementById('food-detail-carbs').textContent = `${food.carbs} g`;
+            document.getElementById('food-detail-fat').textContent = `${food.fat} g`;
+            document.getElementById('food-detail-sugar').textContent = `${food.sugar} g`;
+            document.getElementById('food-detail-fiber').textContent = `${food.fiber} g`;
+            document.getElementById('food-detail-sodium').textContent = `${food.sodium} mg`;
+            document.getElementById('food-detail-cholesterol').textContent = `${food.cholesterol} mg`;
+            
+            foodDetailModal.classList.remove('hidden');
+        }
+        document.getElementById('food-detail-close-btn').addEventListener('click', () => foodDetailModal.classList.add('hidden'));
+
+
+        function renderCustomFoods() {
+            const container = document.getElementById('food-database-container');
+            const foods = getCustomFoods();
+            container.innerHTML = '';
+            if (foods.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 md:col-span-2">ยังไม่มีรายการอาหารในคลังของคุณ</p>';
+                return;
+            }
+            foods.forEach(food => {
+                const card = document.createElement('div');
+                card.className = 'p-4 bg-gray-50 rounded-lg border';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-md">${food.name}</h4>
+                            <p class="text-xs text-gray-500">${food.serving}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="edit-food-btn text-blue-500 hover:text-blue-700 font-bold mr-2" data-id="${food.id}">แก้ไข</button>
+                            <button class="delete-food-btn text-red-500 hover:text-red-700 font-bold" data-id="${food.id}">&times; ลบ</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm border-t pt-2">
+                        <span>พลังงาน:</span> <span class="font-medium text-right">${food.calories} kcal</span>
+                        <span>โปรตีน:</span> <span class="font-medium text-right">${food.protein} g</span>
+                        <span>คาร์บ:</span> <span class="font-medium text-right">${food.carbs} g</span>
+                        <span>ไขมัน:</span> <span class="font-medium text-right">${food.fat} g</span>
+                    </div>
+                    <button class="view-food-btn mt-2 w-full text-center text-sm text-blue-600 hover:underline" data-id="${food.id}">ดูรายละเอียดทั้งหมด</button>
+                    `;
+                container.appendChild(card);
+            });
+        }
+        
+        document.getElementById('food-database-container').addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-food-btn')) {
+                const foodId = parseInt(e.target.dataset.id, 10);
+                showChoiceModal('ยืนยันการลบ', 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการอาหารนี้?', [
+                    { text: 'ยกเลิก', className: 'bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300' },
+                    { text: 'ยืนยัน', className: 'bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600', callback: () => deleteCustomFood(foodId) }
+                ]);
+            }
+            if (e.target.classList.contains('view-food-btn')) {
+                const foodId = parseInt(e.target.dataset.id, 10);
+                showFoodDetails(foodId);
+            }
+            if (e.target.classList.contains('edit-food-btn')) {
+                const foodId = parseInt(e.target.dataset.id, 10);
+                showEditFoodModal(foodId);
+            }
+        });
+
+
+        // --- Saved Recipes Feature ---
+        const SAVED_RECIPES_KEY = 'fitnessPlanSavedRecipes';
+        function getSavedRecipes() { return JSON.parse(localStorage.getItem(SAVED_RECIPES_KEY)) || []; }
+        function saveRecipes(recipes) { localStorage.setItem(SAVED_RECIPES_KEY, JSON.stringify(recipes)); }
+
+        function areIngredientsSimilar(ingredients1, ingredients2) {
+            const set1 = new Set(ingredients1.map(i => i.toLowerCase().trim()));
+            const set2 = new Set(ingredients2.map(i => i.toLowerCase().trim()));
+            const intersection = new Set([...set1].filter(x => set2.has(x)));
+            const union = new Set([...set1, ...set2]);
+            return (intersection.size / union.size) > 0.8;
+        }
+
+        function findSimilarRecipe(newRecipe, savedRecipes) {
+            const byName = savedRecipes.find(r => r.recipeName === newRecipe.recipeName);
+            if (byName) return byName;
+            return savedRecipes.find(r => areIngredientsSimilar(newRecipe.ingredients, r.ingredients));
+        }
+
+        function handleSaveRecipe() {
+            if (!currentRecipeData) { showNotification('ไม่มีข้อมูลสูตรอาหารที่จะบันทึก', true); return; }
+            const savedRecipes = getSavedRecipes();
+            const similarRecipe = findSimilarRecipe(currentRecipeData, savedRecipes);
+            if (similarRecipe) {
+                showChoiceModal('พบสูตรอาหารที่คล้ายกัน', `มีสูตร "${similarRecipe.recipeName}" ที่มีวัตถุดิบคล้ายกันอยู่แล้ว คุณต้องการทำอะไร?`, [
+                    { text: 'บันทึกทับ', className: 'bg-yellow-500 text-white font-bold py-2 px-4 rounded-md hover:bg-yellow-600', callback: () => {
+                        const newRecipes = savedRecipes.map(r => r.id === similarRecipe.id ? { ...currentRecipeData, id: similarRecipe.id } : r);
+                        saveRecipes(newRecipes);
+                        showNotification(`อัปเดตสูตร "${similarRecipe.recipeName}" เรียบร้อยแล้ว`);
+                        document.getElementById('save-recipe-btn').disabled = true;
+                        document.getElementById('save-recipe-btn').textContent = 'บันทึกแล้ว';
+                    }},
+                    { text: 'บันทึกเป็นชื่อใหม่', className: 'bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600', callback: () => {
+                        showInputModal('ตั้งชื่อสูตรอาหารใหม่', 'กรุณาตั้งชื่อใหม่สำหรับสูตรอาหารนี้:', currentRecipeData.recipeName, (newName) => {
+                            if (!newName) { showNotification('การบันทึกถูกยกเลิก', true); return; }
+                            const recipeToSave = { ...currentRecipeData, recipeName: newName, id: Date.now() };
+                            savedRecipes.push(recipeToSave);
+                            saveRecipes(savedRecipes);
+                            showNotification(`บันทึกสูตรใหม่ "${newName}" เรียบร้อยแล้ว`);
+                            document.getElementById('save-recipe-btn').disabled = true;
+                            document.getElementById('save-recipe-btn').textContent = 'บันทึกแล้ว';
+                        });
+                    }},
+                    { text: 'ยกเลิก', className: 'bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300' }
+                ]);
+            } else {
+                const recipeToSave = { ...currentRecipeData, id: Date.now() };
+                savedRecipes.push(recipeToSave);
+                saveRecipes(savedRecipes);
+                showNotification(`สูตร "${recipeToSave.recipeName}" ถูกบันทึกแล้ว!`);
+                document.getElementById('save-recipe-btn').disabled = true;
+                document.getElementById('save-recipe-btn').textContent = 'บันทึกแล้ว';
+            }
+        }
+
+        function deleteRecipe(recipeId) {
+            let savedRecipes = getSavedRecipes();
+            savedRecipes = savedRecipes.filter(recipe => recipe.id !== recipeId);
+            saveRecipes(savedRecipes);
+            renderSavedRecipes();
+            showNotification('ลบสูตรอาหารเรียบร้อยแล้ว');
+        }
+
+        function renderSavedRecipes() {
+            const container = document.getElementById('saved-recipes-container');
+            const savedRecipes = getSavedRecipes();
+            container.innerHTML = '';
+            if (savedRecipes.length === 0) { container.innerHTML = '<p class="text-center text-gray-500">ยังไม่มีเมนูที่บันทึกไว้</p>'; return; }
+            savedRecipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'p-4 bg-gray-50 rounded-lg border';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-lg mb-3">${recipe.recipeName}</h4>
+                        <button class="delete-recipe-btn text-red-500 hover:text-red-700 font-bold" data-id="${recipe.id}">&times; ลบ</button>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div>
+                            <h5 class="font-semibold mb-1">ส่วนผสม:</h5>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm">${recipe.ingredients.map(item => `<li>${item}</li>`).join('')}</ul>
+                            <h5 class="font-semibold mt-4 mb-1">วิธีทำ:</h5>
+                            <p class="text-gray-700 whitespace-pre-wrap text-sm">${recipe.instructions}</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-2">ข้อมูลโภชนาการโดยประมาณ:</h5>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-gray-100 p-3 rounded-md">
+                                <span class="text-gray-600">พลังงาน:</span> <span class="font-medium text-right">${recipe.nutrition.calories}</span>
+                                <span class="text-gray-600">โปรตีน:</span> <span class="font-medium text-right">${recipe.nutrition.protein}</span>
+                                <span class="text-gray-600">คาร์บ:</span> <span class="font-medium text-right">${recipe.nutrition.carbs}</span>
+                                <span class="text-gray-600">ไขมัน:</span> <span class="font-medium text-right">${recipe.nutrition.fat}</span>
+                                <span class="text-gray-600">น้ำตาล:</span> <span class="font-medium text-right">${recipe.nutrition.sugar}</span>
+                                <span class="text-gray-600">โซเดียม:</span> <span class="font-medium text-right">${recipe.nutrition.sodium}</span>
+                                <span class="text-gray-600">คอเลสเตอรอล:</span> <span class="font-medium text-right">${recipe.nutrition.cholesterol}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+        
+        document.getElementById('saved-recipes-container').addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-recipe-btn')) {
+                const recipeId = parseInt(e.target.dataset.id, 10);
+                showChoiceModal('ยืนยันการลบ', 'คุณแน่ใจหรือไม่ว่าต้องการลบสูตรนี้?', [
+                    { text: 'ยกเลิก', className: 'bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300' },
+                    { text: 'ยืนยัน', className: 'bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600', callback: () => deleteRecipe(recipeId) }
+                ]);
+            }
+        });
+
+        // --- Feature 1: Recipe Generator ---
         document.getElementById('generate-recipe-btn').addEventListener('click', async () => {
+            currentRecipeData = null;
             const ingredients = document.getElementById('ingredients-input').value.trim();
             const resultDiv = document.getElementById('recipe-result');
             const loader = document.getElementById('recipe-loader');
-            if (!ingredients) {
-                resultDiv.textContent = 'กรุณาใส่วัตถุดิบที่คุณมี';
-                resultDiv.classList.remove('hidden');
-                return;
-            }
+            if (!ingredients) { resultDiv.innerHTML = '<p>กรุณาใส่วัตถุดิบที่คุณมี</p>'; resultDiv.classList.remove('hidden'); return; }
             loader.style.display = 'flex';
             resultDiv.classList.add('hidden');
-            const prompt = `You are a creative Thai chef specializing in healthy food. A user wants to make a meal for one person with the goal of fat loss and muscle gain. Their available ingredients are: "${ingredients}". Create a simple, delicious, and healthy Thai recipe with step-by-step instructions. The response MUST be in Thai language. Format the output with clear headings for 'ชื่อเมนู' (Menu Name), 'ส่วนผสม' (Ingredients), and 'วิธีทำ' (Instructions).`;
+            
+            const foodDatabase = getCustomFoods();
+            const foodDatabaseString = foodDatabase.map(food => 
+                `${food.name} (ต่อ ${food.serving}): ${food.calories} kcal, โปรตีน ${food.protein}g, คาร์บ ${food.carbs}g, ไขมัน ${food.fat}g`
+            ).join('\n');
+
+            const prompt = `You are a creative Thai chef and an expert nutritionist. A user wants to make a meal and calculate its nutrition.
+
+Here is the user's personal food database for reference:
+---
+${foodDatabaseString}
+---
+
+Here are the ingredients the user has for the meal:
+---
+${ingredients}
+---
+
+Your task is to perform two steps:
+1.  **Calculate Nutrition:** Analyze the user's ingredients. For each ingredient, if it matches an item in the provided food database, use the database's nutritional values to calculate the nutrition for the specified amount. For ingredients NOT in the database (like spices or small vegetables), estimate their nutritional values. Then, sum up all values to get a total for the entire meal.
+2.  **Create Recipe:** Create a simple, healthy Thai recipe using the provided ingredients.
+
+Your response MUST be a single JSON object with the following structure. The text values inside the JSON must be in Thai.
+
+{
+  "recipeName": "ชื่อเมนูภาษาไทย",
+  "ingredients": ["ส่วนผสมที่ 1", "ส่วนผสมที่ 2"],
+  "instructions": "ขั้นตอนการทำแบบละเอียด",
+  "nutrition": {
+    "calories": "ค่าพลังงานรวม (kcal)",
+    "protein": "ค่าโปรตีนรวม (g)",
+    "carbs": "ค่าคาร์โบไฮเดตรวม (g)",
+    "fat": "ค่าไขมันรวม (g)",
+    "sugar": "ค่าน้ำตาลรวม (g)",
+    "sodium": "ค่าโซเดียมรวม (mg)",
+    "cholesterol": "ค่าคอเลสเตอรอลรวม (mg)"
+  }
+}`;
+            
             const result = await callGemini(prompt);
             loader.style.display = 'none';
-            resultDiv.textContent = result;
+            try {
+                const cleanJsonString = result.replace(/```json\n|```/g, '').trim();
+                const recipeData = JSON.parse(cleanJsonString);
+                currentRecipeData = recipeData;
+                const recipeHtml = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-lg mb-3">${recipeData.recipeName}</h4>
+                        <button id="save-recipe-btn" class="bg-green-500 text-white font-bold py-1 px-3 rounded-md hover:bg-green-600 transition-colors text-sm">💾 บันทึกสูตรนี้</button>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div>
+                            <h5 class="font-semibold mb-1">ส่วนผสม:</h5>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">${recipeData.ingredients.map(item => `<li>${item}</li>`).join('')}</ul>
+                            <h5 class="font-semibold mt-4 mb-1">วิธีทำ:</h5>
+                            <p class="text-gray-700 whitespace-pre-wrap">${recipeData.instructions}</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-2">ข้อมูลโภชนาการโดยประมาณ:</h5>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-gray-100 p-3 rounded-md">
+                                <span class="text-gray-600">พลังงาน:</span> <span class="font-medium text-right">${recipeData.nutrition.calories}</span>
+                                <span class="text-gray-600">โปรตีน:</span> <span class="font-medium text-right">${recipeData.nutrition.protein}</span>
+                                <span class="text-gray-600">คาร์บ:</span> <span class="font-medium text-right">${recipeData.nutrition.carbs}</span>
+                                <span class="text-gray-600">ไขมัน:</span> <span class="font-medium text-right">${recipeData.nutrition.fat}</span>
+                                <span class="text-gray-600">น้ำตาล:</span> <span class="font-medium text-right">${recipeData.nutrition.sugar}</span>
+                                <span class="text-gray-600">โซเดียม:</span> <span class="font-medium text-right">${recipeData.nutrition.sodium}</span>
+                                <span class="text-gray-600">คอเลสเตอรอล:</span> <span class="font-medium text-right">${recipeData.nutrition.cholesterol}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                resultDiv.innerHTML = recipeHtml;
+            } catch (e) {
+                console.error("Failed to parse recipe JSON:", e);
+                resultDiv.innerHTML = `<p>ขออภัย, เกิดข้อผิดพลาดในการแสดงผลสูตรอาหาร ลองใหม่อีกครั้ง</p><p class="text-xs text-gray-500 mt-2">Raw response: ${result}</p>`;
+            }
             resultDiv.classList.remove('hidden');
         });
+        document.getElementById('recipe-result').addEventListener('click', (e) => { if (e.target.id === 'save-recipe-btn') handleSaveRecipe(); });
 
-        // Feature 2: Workout Suggestion
+        // --- Feature 2: Workout Suggestion ---
         const modal = document.getElementById('suggestion-modal');
         document.getElementById('workout').addEventListener('click', async (e) => {
             if (e.target.classList.contains('suggest-btn')) {
@@ -512,35 +1142,26 @@
         document.getElementById('close-modal-btn').addEventListener('click', () => modal.classList.add('hidden'));
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
-        // Feature 3: AI Assistant Chat
+        // --- Feature 3: AI Assistant Chat ---
         const chatWindow = document.getElementById('chat-window');
         const chatInput = document.getElementById('chat-input');
         const sendChatBtn = document.getElementById('send-chat-btn');
-
         const handleChatSend = async () => {
             const userMessage = chatInput.value.trim();
             if (!userMessage) return;
-
-            // Display user message
             const userBubble = document.createElement('div');
             userBubble.className = 'chat-bubble-user p-3 rounded-lg max-w-lg';
             userBubble.textContent = userMessage;
             chatWindow.appendChild(userBubble);
             chatInput.value = '';
             chatWindow.scrollTop = chatWindow.scrollHeight;
-
-            // Display loader
             const loaderBubble = document.createElement('div');
             loaderBubble.className = 'chat-bubble-ai p-3 rounded-lg max-w-lg flex items-center justify-center';
             loaderBubble.innerHTML = '<div class="loader" style="width: 24px; height: 24px; border-width: 3px;"></div>';
             chatWindow.appendChild(loaderBubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
-
-            // Call AI
-            const prompt = `You are a helpful and encouraging fitness and nutrition assistant for a user following a specific 3-month body recomposition plan. The user's details are: male, age 29, 66kg, 175cm. The plan involves a 4-day Upper/Lower split workout and calorie cycling (2500 kcal on workout days, 2000 kcal on rest days). Your primary goal is to answer the user's questions clearly and concisely, relating your answers back to their specific plan whenever possible. Keep responses supportive and in Thai. The user's question is: "${userMessage}"`;
+            const prompt = `You are a helpful and encouraging fitness and nutrition assistant for a user following a specific 3-month body recomposition plan. User details: male, 29, 66kg, 175cm. Plan: 4-day Upper/Lower split, calorie cycling (2500 kcal workout, 2000 kcal rest). Your primary goal is to answer questions clearly, relating back to their plan. Keep responses supportive and in Thai. The user's question is: "${userMessage}"`;
             const aiResponse = await callGemini(prompt);
-
-            // Display AI response
             loaderBubble.remove();
             const aiBubble = document.createElement('div');
             aiBubble.className = 'chat-bubble-ai p-3 rounded-lg max-w-lg';
@@ -548,13 +1169,8 @@
             chatWindow.appendChild(aiBubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
         };
-        
         sendChatBtn.addEventListener('click', handleChatSend);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleChatSend();
-            }
-        });
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleChatSend(); });
 
     </script>
 
