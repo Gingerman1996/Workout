@@ -326,18 +326,19 @@
         </div>
     </div>
 
-    <script type="module">
-        import { API_KEY } from './config.js';
-        
-        const tabs = document.querySelectorAll('.tab-btn');
-        const contents = document.querySelectorAll('.content-section');
-
+    <script>
         function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.content-section');
             tabs.forEach(tab => tab.classList.remove('active'));
             document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
             contents.forEach(content => content.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
         }
+    </script>
+
+    <script type="module">
+        import { API_KEY } from './config.js';
 
         async function callGemini(prompt) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
