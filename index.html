@@ -326,7 +326,9 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { API_KEY } from './config.js';
+        
         const tabs = document.querySelectorAll('.tab-btn');
         const contents = document.querySelectorAll('.content-section');
 
@@ -337,10 +339,8 @@
             document.getElementById(tabName).classList.add('active');
         }
 
-        const apiKey = "AIzaSyDh4ZMjfFh_XssRCKB8EGeIEVEguoptzOw"; 
-
         async function callGemini(prompt) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
             try {
                 const response = await fetch(apiUrl, {
