@@ -76,6 +76,9 @@
         <header class="text-center mb-8">
             <h1 class="text-3xl sm:text-4xl font-bold text-[#4A4A4A]">แผนปฏิวัติรูปร่าง 3 เดือน</h1>
             <p class="text-lg text-gray-600 mt-2">คู่มือฉบับสมบูรณ์ พร้อมผู้ช่วย AI ✨</p>
+            <button id="setup-apikey-btn" class="mt-4 bg-[#C5A47E] bg-opacity-20 text-[#C5A47E] font-semibold py-2 px-4 rounded-md hover:bg-opacity-30 transition-colors text-sm">
+                🔑 ตั้งค่า API Key
+            </button>
         </header>
 
         <nav class="flex justify-center border-b border-gray-200 mb-8 flex-wrap">
@@ -314,6 +317,26 @@
         </main>
     </div>
 
+    <!-- Modal for API Key Setup -->
+    <div id="apikey-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-[#C5A47E]">🔑 ตั้งค่า API Key</h3>
+                <button id="close-apikey-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-gray-600">เพื่อใช้งานฟีเจอร์ AI กรุณาใส่ Gemini API Key ของคุณ</p>
+                <div class="space-y-2">
+                    <input type="text" id="apikey-input" class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#C5A47E]" placeholder="ใส่ API Key ของคุณที่นี่...">
+                    <p class="text-xs text-gray-500">API Key จะถูกจัดเก็บในเบราว์เซอร์ของคุณเท่านั้น</p>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button id="save-apikey-btn" class="bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for Workout Suggestion -->
     <div id="suggestion-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
@@ -327,63 +350,98 @@
     </div>
 
     <script>
+        // API Key Management
+        const apikeyModal = document.getElementById('apikey-modal');
+        const setupApiKeyBtn = document.getElementById('setup-apikey-btn');
+        const closeApiKeyModalBtn = document.getElementById('close-apikey-modal-btn');
+        const saveApiKeyBtn = document.getElementById('save-apikey-btn');
+        const apikeyInput = document.getElementById('apikey-input');
+
+        function showApiKeyModal() {
+            apikeyModal.classList.remove('hidden');
+            const currentApiKey = getApiKey();
+            if (currentApiKey) {
+                apikeyInput.value = currentApiKey;
+            }
+        }
+
+        function hideApiKeyModal() {
+            apikeyModal.classList.add('hidden');
+        }
+
+        setupApiKeyBtn.addEventListener('click', showApiKeyModal);
+        closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
+        apikeyModal.addEventListener('click', (e) => {
+            if (e.target === apikeyModal) hideApiKeyModal();
+        });
+
+        saveApiKeyBtn.addEventListener('click', async () => {
+            const apiKey = apikeyInput.value.trim();
+            if (!apiKey) {
+                alert('กรุณาใส่ API Key');
+                return;
+            }
+
+            // Test API key before saving
+            try {
+                const testPrompt = "Hello";
+                const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(testUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: testPrompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // ตรวจสอบว่าการเรียก API สำเร็จและได้ผลลัพธ์ที่ถูกต้อง
+                if (!response.ok || !data.candidates || !data.candidates[0]?.content?.parts?.length) {
+                    throw new Error('Invalid API Key');
+                }
+
+                localStorage.setItem('geminiApiKey', apiKey);
+                hideApiKeyModal();
+                alert('บันทึก API Key เรียบร้อยแล้ว');
+            } catch (error) {
+                alert('API Key ไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง');
+            }
+        });
+
+        // Tab Management
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.content-section');
+
         function showTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-btn');
-            const contents = document.querySelectorAll('.content-section');
             tabs.forEach(tab => tab.classList.remove('active'));
             document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
             contents.forEach(content => content.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
         }
-    </script>
 
-    <script>
-        let API_KEY = localStorage.getItem('gemini_api_key');
-        if (!API_KEY) {
-            // ถ้าไม่มี API key ใน localStorage ให้แสดง input form
-            const apiKeyForm = document.createElement('div');
-            apiKeyForm.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
-            apiKeyForm.innerHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                    <h3 class="text-xl font-bold mb-4 text-[#4A4A4A]">เริ่มต้นใช้งาน AI Assistant</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-sm text-gray-600 mb-2">1. ไปที่ <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-500 underline">Google AI Studio</a></p>
-                            <p class="text-sm text-gray-600 mb-2">2. คลิก "Create API key" เพื่อสร้าง API key ใหม่</p>
-                            <p class="text-sm text-gray-600 mb-4">3. คัดลอก API key และวางลงในช่องด้านล่าง</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-2">API Key ของคุณ:</label>
-                            <input type="password" id="api-key-input" class="w-full p-3 border rounded-md mb-2" placeholder="วาง API key ที่นี่...">
-                            <div class="flex items-center mb-4">
-                                <input type="checkbox" id="show-key" class="mr-2">
-                                <label for="show-key" class="text-sm text-gray-600">แสดง API key</label>
-                            </div>
-                            <button id="save-api-key" class="w-full bg-[#C5A47E] text-white py-3 px-4 rounded-md hover:bg-opacity-90 transition-colors">บันทึกและเริ่มใช้งาน</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Get API key from localStorage
+        function getApiKey() {
+            return localStorage.getItem('geminiApiKey');
+        }
 
-            // เพิ่ม event listener สำหรับการแสดง/ซ่อน API key
-            apiKeyForm.querySelector('#show-key').addEventListener('change', (e) => {
-                const input = document.getElementById('api-key-input');
-                input.type = e.target.checked ? 'text' : 'password';
-            });
-            document.body.appendChild(apiKeyForm);
-            
-            document.getElementById('save-api-key').addEventListener('click', () => {
-                const input = document.getElementById('api-key-input');
-                if (input.value.trim()) {
-                    localStorage.setItem('gemini_api_key', input.value.trim());
-                    API_KEY = input.value.trim();
-                    apiKeyForm.remove();
-                }
-            });
+        // Check if API key exists
+        function checkApiKey() {
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                showApiKeyModal();
+                return false;
+            }
+            return true;
         }
 
         async function callGemini(prompt) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                showApiKeyModal();
+                return "กรุณาตั้งค่า API Key ก่อนใช้งาน";
+            }
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
             try {
                 const response = await fetch(apiUrl, {
@@ -391,51 +449,30 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
+                const result = await response.json();
+                
                 if (!response.ok) {
-                    if (response.status === 400 || response.status === 401 || response.status === 403) {
-                        localStorage.removeItem('gemini_api_key');
-                        const errorModal = document.createElement('div');
-                        errorModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
-                        errorModal.innerHTML = `
-                            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-bold text-red-500">❌ เกิดข้อผิดพลาด</h3>
-                                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">&times;</button>
-                                </div>
-                                <p class="text-gray-600 mb-4">API key ไม่ถูกต้องหรือหมดอายุ กรุณาลองใส่ API key ใหม่อีกครั้ง</p>
-                                <div class="flex justify-end">
-                                    <button class="bg-[#C5A47E] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors" onclick="location.reload();">ลองใหม่</button>
-                                </div>
-                            </div>
-                        `;
-                        document.body.appendChild(errorModal);
-                        throw new Error('Invalid API key');
+                    // ถ้า API key ไม่ถูกต้อง
+                    if (response.status === 400 || response.status === 401) {
+                        localStorage.removeItem('geminiApiKey'); // ลบ API key ที่ไม่ถูกต้อง
+                        showApiKeyModal();
+                        return "API Key ไม่ถูกต้อง กรุณาตั้งค่า API Key ใหม่";
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const result = await response.json();
-                if (result.candidates && result.candidates[0].content.parts.length > 0) {
+
+                if (result.candidates && result.candidates[0]?.content?.parts?.length > 0) {
                     return result.candidates[0].content.parts[0].text;
                 }
                 return "ขออภัย, ไม่สามารถสร้างคำตอบได้ในขณะนี้";
             } catch (error) {
                 console.error("Gemini API call failed:", error);
-                const errorModal = document.createElement('div');
-                errorModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
-                errorModal.innerHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-bold text-[#C5A47E]">✨ ท่าออกกำลังกายทางเลือก</h3>
-                            <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">&times;</button>
-                        </div>
-                        <p class="text-gray-600 mb-4">เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง</p>
-                        <div class="flex justify-end">
-                            <button class="bg-[#C5A47E] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors" onclick="this.closest('.fixed').remove(); localStorage.removeItem('gemini_api_key'); location.reload();">ลองใหม่</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(errorModal);
-                return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI";
+                // ถ้าเป็นปัญหาเรื่องการเชื่อมต่อ
+                if (error.message.includes('Failed to fetch')) {
+                    return "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตและลองใหม่อีกครั้ง";
+                }
+                return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง";
             }
         }
 
