@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนปฏิวัติรูปร่าง 3 เดือน (พร้อมผู้ช่วย AI)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Calm Accents -->
+    <!-- Application Structure Plan: A tab-based Single Page Application (SPA) structure was chosen for optimal user experience. This design allows the user to easily navigate between different aspects of their comprehensive plan—Calendar, Workouts, Nutrition, and FAQs—without leaving the page. This is more intuitive than a long, scrolling document. The 'Calendar' view provides a high-level weekly overview, while other tabs offer detailed information. This structure directly addresses the user's need for clarity and organization by compartmentalizing complex information into digestible sections. -->
+    <!-- Visualization & Content Choices: The plan uses structured HTML tables for workout and nutrition plans for clarity. Interactive tabs (HTML/JS) are used for navigation. Collapsible sections (details/summary tags) are used for stretching routines to avoid information overload. A dedicated FAQ section directly answers user-specific questions, which is more effective than embedding answers into a long narrative. A key visualization is the weekly calendar, built with Tailwind CSS Grid, which visually represents the user's entire week at a glance. This is more user-friendly than a text-based schedule. No charts are needed for this report type. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .tab-btn.active {
+            color: #C5A47E;
+            border-bottom-color: #C5A47E;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        details > summary {
+            cursor: pointer;
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        details[open] > summary .arrow-down {
+            transform: rotate(180deg);
+        }
+        .arrow-down {
+            transition: transform 0.2s ease-in-out;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #C5A47E;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .chat-bubble-user {
+            background-color: #C5A47E;
+            color: white;
+            align-self: flex-end;
+        }
+        .chat-bubble-ai {
+            background-color: #f0f0f0;
+            color: #4A4A4A;
+            align-self: flex-start;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-6xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-[#4A4A4A]">แผนปฏิวัติรูปร่าง 3 เดือน</h1>
+            <p class="text-lg text-gray-600 mt-2">คู่มือฉบับสมบูรณ์ พร้อมผู้ช่วย AI ✨</p>
+        </header>
+
+        <nav class="flex justify-center border-b border-gray-200 mb-8 flex-wrap">
+            <button class="tab-btn active text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('calendar')">🗓️ ปฏิทิน</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('workout')">💪 ออกกำลังกาย</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('nutrition')">🥗 โภชนาการ</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('faq')">❓ FAQ</button>
+            <button class="tab-btn text-sm sm:text-base font-semibold py-4 px-2 sm:px-4" onclick="showTab('ai-assistant')">🤖 คุยกับ AI</button>
+        </nav>
+
+        <main>
+            <!-- Calendar Section -->
+            <section id="calendar" class="content-section active">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">ตารางชีวิตประจำสัปดาห์</h2>
+                    <p class="mb-6 text-gray-600">นี่คือภาพรวมตารางชีวิตของคุณในแต่ละสัปดาห์ เพื่อให้คุณสามารถวางแผนและปฏิบัติตามได้อย่างมีประสิทธิภาพ</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <div class="col-span-1 md:col-span-2 lg:col-span-4 text-center font-bold text-xl mb-2">วันทำงาน (จันทร์, อังคาร, พฤหัส, ศุกร์)</div>
+                        
+                        <div class="bg-[#FDFBF8] p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-lg mb-2">จันทร์ & พฤหัส (Upper Body)</h3>
+                            <div class="text-sm space-y-2 text-gray-700">
+                                <p><strong>06:30:</strong> ตื่นนอน, ดื่มน้ำ</p><p><strong>07:00:</strong> 🍳 มื้อที่ 1 (วันฝึก)</p><p><strong>07:20:</strong> 🚗 เดินทางไปทำงาน</p><p><strong>08:00:</strong> 💻 เริ่มทำงาน</p><p><strong>12:00:</strong> 🍗 มื้อที่ 2 (วันฝึก)</p><p><strong>17:00:</strong> 🚗 เดินทางกลับบ้าน</p><p><strong>17:40:</strong> 🍌 มื้อที่ 3 (ก่อนฝึก)</p><p><strong>18:30:</strong> 💪 เข้ายิม (Upper Body)</p><p><strong>20:30:</strong> 🍚 มื้อที่ 4 (หลังฝึก)</p><p><strong>22:30:</strong> 😴 พักผ่อน, เตรียมตัวนอน</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#FDFBF8] p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-lg mb-2">อังคาร & ศุกร์ (Lower Body & Core)</h3>
+                             <div class="text-sm space-y-2 text-gray-700">
+                                <p><strong>06:30:</strong> ตื่นนอน, ดื่มน้ำ</p><p><strong>07:00:</strong> 🍳 มื้อที่ 1 (วันฝึก)</p><p><strong>07:20:</strong> 🚗 เดินทางไปทำงาน</p><p><strong>08:00:</strong> 💻 เริ่มทำงาน</p><p><strong>12:00:</strong> 🍗 มื้อที่ 2 (วันฝึก)</p><p><strong>17:00:</strong> 🚗 เดินทางกลับบ้าน</p><p><strong>17:40:</strong> 🍌 มื้อที่ 3 (ก่อนฝึก)</p><p><strong>18:30:</strong> 🏋️ เข้ายิม (Lower Body & Core)</p><p><strong>20:30:</strong> 🍚 มื้อที่ 4 (หลังฝึก)</p><p><strong>22:30:</strong> 😴 พักผ่อน, เตรียมตัวนอน</p>
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2 lg:col-span-4 text-center font-bold text-xl my-2">วันพัก & วันหยุด (พุธ, เสาร์, อาทิตย์)</div>
+
+                        <div class="bg-[#F0F5F5] p-4 rounded-lg border border-gray-200 col-span-1 md:col-span-2 lg:col-span-2">
+                             <h3 class="font-bold text-lg mb-2">พุธ (วันพัก)</h3>
+                             <div class="text-sm space-y-2 text-gray-700">
+                                <p><strong>08:00:</strong> ☀️ ตื่นนอน</p><p><strong>08:30:</strong> 🍳 มื้อที่ 1 (วันพัก)</p><p><strong>13:00:</strong> 🍗 มื้อที่ 2 (วันพัก)</p><p><strong>18:00:</strong> 🍚 มื้อที่ 3 (วันพัก)</p><p><strong>21:00:</strong> 🐟 มื้อที่ 4 (วันพัก)</p><p><strong>22:30:</strong> 😴 พักผ่อน, เตรียมตัวนอน</p>
+                             </div>
+                        </div>
+                        <div class="bg-[#F0F5F5] p-4 rounded-lg border border-gray-200 col-span-1 md:col-span-2 lg:col-span-2">
+                             <h3 class="font-bold text-lg mb-2">เสาร์ & อาทิตย์ (วันพัก)</h3>
+                             <div class="text-sm space-y-2 text-gray-700">
+                                <p><strong>08:00:</strong> ☀️ ตื่นนอน</p><p><strong>08:30:</strong> 🍳 มื้อที่ 1 (วันพัก)</p><p><strong>10:00:</strong> 🛒 ซื้อของ & เตรียมอาหาร</p><p><strong>13:00:</strong> 🍗 มื้อที่ 2 (วันพัก)</p><p><strong>18:00:</strong> 🍚 มื้อที่ 3 (วันพัก)</p><p><strong>21:00:</strong> 🐟 มื้อที่ 4 (วันพัก)</p><p><strong>22:30:</strong> 😴 พักผ่อน, เตรียมตัวนอน</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workout Section -->
+            <section id="workout" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-2 text-[#C5A47E]">แผนการออกกำลังกาย 12 สัปดาห์</h2>
+                    <p class="mb-1 text-red-600 font-semibold">คำชี้แจงสำคัญ: ตารางการฝึกด้านล่างนี้เป็นโปรแกรมสำหรับ <strong class="underline">ระยะที่ 1 (สัปดาห์ที่ 1-4)</strong> เท่านั้น</p>
+                    <p class="mb-6 text-gray-600">สำหรับระยะที่ 2 และ 3 จะมีการปรับเปลี่ยนท่าและความเข้มข้นเพื่อท้าทายร่างกายอย่างต่อเนื่อง</p>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h3 class="font-bold text-xl mb-3">วันจันทร์ & พฤหัสบดี: Upper Body</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm" id="upper-body-workout">
+                                    <thead class="bg-gray-200"><tr><th class="p-2">ท่าออกกำลังกาย</th><th class="p-2">เซต</th><th class="p-2">จำนวนครั้ง</th><th class="p-2">พัก (วิ)</th><th class="p-2">ทางเลือก</th></tr></thead>
+                                    <tbody>
+                                        <tr class="border-b"><td class="p-2">Machine Chest Press</td><td class="p-2">3</td><td class="p-2">8-12</td><td class="p-2">60-90</td><td class="p-2"><button class="suggest-btn" data-exercise="Machine Chest Press">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Incline Press</td><td class="p-2">3</td><td class="p-2">8-12</td><td class="p-2">60-90</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Incline Press">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Lat Pulldown</td><td class="p-2">3</td><td class="p-2">8-12</td><td class="p-2">60-90</td><td class="p-2"><button class="suggest-btn" data-exercise="Lat Pulldown">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Long Pull (Seated Row)</td><td class="p-2">3</td><td class="p-2">10-15</td><td class="p-2">60</td><td class="p-2"><button class="suggest-btn" data-exercise="Long Pull (Seated Row)">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Machine Shoulder Press</td><td class="p-2">3</td><td class="p-2">8-12</td><td class="p-2">60-90</td><td class="p-2"><button class="suggest-btn" data-exercise="Machine Shoulder Press">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Lateral Raises</td><td class="p-2">3</td><td class="p-2">12-15</td><td class="p-2">45-60</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Lateral Raises">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Bicep Curls</td><td class="p-2">2</td><td class="p-2">10-15</td><td class="p-2">45</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Bicep Curls">✨</button></td></tr>
+                                        <tr><td class="p-2">Dumbbell Overhead Tricep Ext.</td><td class="p-2">2</td><td class="p-2">10-15</td><td class="p-2">45</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Overhead Tricep Extension">✨</button></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h3 class="font-bold text-xl mb-3">วันอังคาร & ศุกร์: Lower Body & Core</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm" id="lower-body-workout">
+                                    <thead class="bg-gray-200"><tr><th class="p-2">ท่าออกกำลังกาย</th><th class="p-2">เซต</th><th class="p-2">จำนวนครั้ง/เวลา</th><th class="p-2">พัก (วิ)</th><th class="p-2">ทางเลือก</th></tr></thead>
+                                    <tbody>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Goblet Squats</td><td class="p-2">3</td><td class="p-2">8-12</td><td class="p-2">60-90</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Goblet Squats">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Lunges</td><td class="p-2">3</td><td class="p-2">10-12 (ต่อข้าง)</td><td class="p-2">60</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Lunges">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Seated Leg Extension</td><td class="p-2">3</td><td class="p-2">12-15</td><td class="p-2">60</td><td class="p-2"><button class="suggest-btn" data-exercise="Seated Leg Extension">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Seated Leg Curl</td><td class="p-2">3</td><td class="p-2">12-15</td><td class="p-2">60</td><td class="p-2"><button class="suggest-btn" data-exercise="Seated Leg Curl">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2">Dumbbell Romanian Deadlifts</td><td class="p-2">3</td><td class="p-2">10-15</td><td class="p-2">60</td><td class="p-2"><button class="suggest-btn" data-exercise="Dumbbell Romanian Deadlifts">✨</button></td></tr>
+                                        <tr class="border-b"><td class="p-2 font-semibold" colspan="5">โปรแกรมกล้ามท้อง (ทำหลังเล่นเวทเสร็จ)</td></tr>
+                                        <tr class="border-b"><td class="p-2 pl-6">Plank</td><td class="p-2">3</td><td class="p-2">ค้างไว้ 30-60 วิ</td><td class="p-2">30</td><td></td></tr>
+                                        <tr class="border-b"><td class="p-2 pl-6">Lying Leg Raises</td><td class="p-2">3</td><td class="p-2">15-20</td><td class="p-2">30</td><td></td></tr>
+                                        <tr class="border-b"><td class="p-2 pl-6">Crunches</td><td class="p-2">3</td><td class="p-2">15-20</td><td class="p-2">30</td><td></td></tr>
+                                        <tr class="border-b"><td class="p-2 font-semibold" colspan="5">คาร์ดิโอ (ทำหลังเล่นกล้ามท้องเสร็จ)</td></tr>
+                                        <tr><td class="p-2 pl-6">เดินชันบนลู่วิ่ง / ปั่นจักรยาน</td><td class="p-2">-</td><td class="p-2">20-30 นาที</td><td class="p-2">-</td><td></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="text-xl font-bold mb-4">การวอร์มอัพและคูลดาวน์ (สำคัญมาก!)</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Dynamic Stretching (ก่อนออกกำลังกาย)</h4>
+                                <p class="text-sm text-gray-600 mb-3">ทำ 5 นาทีเพื่อเตรียมกล้ามเนื้อและข้อต่อ</p>
+                                <details class="bg-gray-50 p-3 rounded-lg border mb-2">
+                                    <summary class="font-semibold flex justify-between items-center">สำหรับวัน Upper Body <span class="arrow-down">▼</span></summary>
+                                    <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1">
+                                        <li><strong>Arm Circles (หมุนแขน)</strong></li><li><strong>Torso Twists (บิดลำตัว)</strong></li><li><strong>Cat-Cow Stretch</strong></li>
+                                    </ul>
+                                </details>
+                                <details class="bg-gray-50 p-3 rounded-lg border">
+                                    <summary class="font-semibold flex justify-between items-center">สำหรับวัน Lower Body <span class="arrow-down">▼</span></summary>
+                                    <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1">
+                                        <li><strong>Leg Swings (แกว่งขา)</strong></li><li><strong>Bodyweight Squats</strong></li><li><strong>High Knees (ยกเข่าสูง)</strong></li>
+                                    </ul>
+                                </details>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Static Stretching (หลังออกกำลังกาย)</h4>
+                                <p class="text-sm text-gray-600 mb-3">ทำ 5 นาทีเพื่อช่วยฟื้นฟูและลดความตึงของกล้ามเนื้อ</p>
+                                <details class="bg-gray-50 p-3 rounded-lg border mb-2">
+                                    <summary class="font-semibold flex justify-between items-center">สำหรับวัน Upper Body <span class="arrow-down">▼</span></summary>
+                                    <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1">
+                                        <li><strong>Cross-body Shoulder Stretch</strong></li><li><strong>Overhead Triceps Stretch</strong></li><li><strong>Chest Stretch</strong></li><li><strong>Child's Pose</strong></li>
+                                    </ul>
+                                </details>
+                                <details class="bg-gray-50 p-3 rounded-lg border">
+                                    <summary class="font-semibold flex justify-between items-center">สำหรับวัน Lower Body <span class="arrow-down">▼</span></summary>
+                                    <ul class="list-disc list-inside mt-2 text-sm text-gray-700 space-y-1">
+                                        <li><strong>Standing Quadriceps Stretch</strong></li><li><strong>Standing Hamstring Stretch</strong></li><li><strong>Figure-4 Stretch</strong></li><li><strong>Calf Stretch</strong></li>
+                                    </ul>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Nutrition Section -->
+            <section id="nutrition" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">แผนโภชนาการและสูตรอาหาร</h2>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-xl mb-3">เป้าหมายสารอาหาร (Macro)</h3>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">วันฝึก (4 วัน)</h4>
+                                    <p class="text-2xl font-bold text-blue-600">2500</p><p class="text-sm">Kcal</p>
+                                    <div class="text-xs mt-2">P: 132g, C: 250g, F: 56g</div>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold">วันพัก (3 วัน)</h4>
+                                    <p class="text-2xl font-bold text-green-600">2000</p><p class="text-sm">Kcal</p>
+                                    <div class="text-xs mt-2">P: 132g, C: 218g, F: 67g</div>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3 mt-6">ตัวอย่างแผนการกิน</h3>
+                            <p class="text-sm text-gray-600 mb-2"><strong>มื้อวันฝึก:</strong> 1.ข้าวโอ๊ต 80ก, ไข่ 3 ฟอง | 2.อกไก่ 200ก, ข้าว 250ก | 3.กล้วย, ทูน่า 1 กระป๋อง | 4.อกไก่ 200ก, ข้าว 250ก</p>
+                            <p class="text-sm text-gray-600"><strong>มื้อวันพัก:</strong> 1.ข้าวโอ๊ต 60ก, ไข่ 4 ฟอง | 2.อกไก่ 200ก, ข้าว 150ก | 3.อกไก่ 200ก, ข้าว 150ก | 4.ทูน่า 1 กระป๋อง</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xl mb-3">ไอเดียเมนูปลาทูน่า (1 กระป๋อง)</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ยำทูน่าสมุนไพร</p><p class="text-gray-600">ทูน่าในน้ำแร่, หอมแดง, ตะไคร้, ใบสะระแหน่, พริก, มะนาว</p></div>
+                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ลาบทูน่าข้าวคั่ว</p><p class="text-gray-600">ทูน่าในน้ำแร่, ข้าวคั่ว, พริกป่น, น้ำปลา, มะนาว, หอมแดง</p></div>
+                                <div class="bg-gray-50 p-3 rounded-lg border"><p class="font-semibold">ทูน่าคั่วกลิ้ง</p><p class="text-gray-600">ทูน่าคั่วในกระทะกับพริกแกงใต้และใบมะกรูด (ไม่ใช้น้ำมัน)</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Gemini Recipe Generator -->
+                    <div class="mt-8 pt-6 border-t">
+                        <h3 class="font-bold text-xl mb-3">✨ ผู้ช่วยคิดสูตรอาหาร AI</h3>
+                        <p class="text-gray-600 mb-4 text-sm">มีวัตถุดิบอะไรในตู้เย็น? บอกเรา แล้ว AI จะสร้างสรรค์เมนูอร่อยเพื่อสุขภาพให้คุณ!</p>
+                        <textarea id="ingredients-input" class="w-full p-2 border rounded-md" rows="3" placeholder="เช่น: อกไก่, บรอกโคลี, ไข่, ข้าวกล้อง..."></textarea>
+                        <button id="generate-recipe-btn" class="mt-2 bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors">สร้างสูตรอาหาร</button>
+                        <div id="recipe-loader" class="hidden justify-center items-center mt-4"><div class="loader"></div></div>
+                        <div id="recipe-result" class="mt-4 p-4 bg-gray-50 rounded-lg border hidden whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section id="faq" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">คำถามที่พบบ่อย (FAQ)</h2>
+                    <div class="space-y-4">
+                        <details class="bg-gray-50 p-4 rounded-lg border">
+                            <summary class="font-semibold text-base flex justify-between items-center">1. ยังจำเป็นต้องกินเวย์โปรตีนอยู่ไหม?<span class="arrow-down ml-2">▼</span></summary>
+                            <div class="mt-3 text-sm text-gray-700 space-y-2">
+                                <p><strong>คำตอบ:</strong> เวย์โปรตีนเป็น "อาหารเสริม" ไม่ใช่ "สิ่งจำเป็น" ครับ ข้อดีของมันคือความสะดวกและรวดเร็วในการเพิ่มโปรตีนให้ถึงเป้าหมาย คุณสามารถใช้เวย์ 1-2 สกู๊ปเสริมได้ โดยอาจจะลดโปรตีนจากอาหารหลักลงเล็กน้อยเพื่อคุมแคลอรี่รวม หรือกินเสริมเข้าไปเลยเพื่อช่วยฟื้นฟูร่างกาย (แต่อาจลดไขมันช้าลงเล็กน้อย)</p>
+                            </div>
+                        </details>
+                        <details class="bg-gray-50 p-4 rounded-lg border">
+                            <summary class="font-semibold text-base flex justify-between items-center">2. ถ้าจะกินโปรตีน 235g, คาร์บ 200g, ไขมัน 30g จะได้ไหม?<span class="arrow-down ml-2">▼</span></summary>
+                            <div class="mt-3 text-sm text-gray-700">
+                                <p><strong>คำตอบ:</strong> <strong>ไม่แนะนำอย่างยิ่งครับ</strong> ปริมาณไขมันที่ 30 กรัมนั้นต่ำเกินไปสำหรับผู้ชาย และอาจส่งผลเสียต่อการผลิตฮอร์โมนในระยะยาว ขอให้ยึดตามตารางสารอาหารที่คำนวณไว้ให้ ซึ่งมีความสมดุลและปลอดภัยกว่าครับ</p>
+                            </div>
+                        </details>
+                        <details class="bg-gray-50 p-4 rounded-lg border">
+                            <summary class="font-semibold text-base flex justify-between items-center">3. เล่นแต่เวทเทรนนิ่ง น้ำหนักจะลดจริงหรือ?<span class="arrow-down ml-2">▼</span></summary>
+                            <div class="mt-3 text-sm text-gray-700">
+                                <p><strong>คำตอบ:</strong> เป้าหมายของเราคือ "การปรับเปลี่ยนองค์ประกอบร่างกาย" (Body Recomposition) ไม่ใช่แค่ "การลดน้ำหนัก" การเล่นเวทจะสร้างกล้ามเนื้อ ในขณะที่การคุมอาหารจะลดไขมัน น้ำหนักบนตาชั่งอาจไม่เปลี่ยนมาก แต่สัดส่วนและรูปร่างของคุณจะดีขึ้นอย่างเห็นได้ชัดครับ</p>
+                            </div>
+                        </details>
+                        <details class="bg-gray-50 p-4 rounded-lg border">
+                            <summary class="font-semibold text-base flex justify-between items-center">4. คาร์ดิโอด้วยจักรยานแทนได้ไหม? และกินมื้อดึกตอน 20:30 จะดีหรือ?<span class="arrow-down ml-2">▼</span></summary>
+                            <div class="mt-3 text-sm text-gray-700 space-y-2">
+                                <p><strong>คาร์ดิโอด้วยจักรยาน:</strong> ได้เลยครับ เป็นทางเลือกที่ดีเยี่ยม สามารถใช้แทนการเดินชันบนลู่วิ่งได้เลย</p>
+                                <p><strong>กินมื้อดึก (20:30):</strong> ดีและเหมาะสมแล้วครับ การกินอาหารหลังออกกำลังกายเป็นสิ่งสำคัญมากเพื่อซ่อมแซมและสร้างกล้ามเนื้อ ไม่ต้องกังวลเรื่องเวลาครับ</p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- AI Assistant Section -->
+            <section id="ai-assistant" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-[#C5A47E]">🤖 ผู้ช่วยส่วนตัว AI</h2>
+                    <p class="text-gray-600 mb-4">มีคำถามเกี่ยวกับแผนการออกกำลังกาย โภชนาการ หรือสุขภาพใช่ไหม? ถามได้เลย!</p>
+                    <div class="bg-gray-50 border rounded-lg p-4 h-96 overflow-y-auto flex flex-col space-y-4" id="chat-window">
+                        <!-- Chat messages will appear here -->
+                        <div class="chat-bubble-ai p-3 rounded-lg max-w-lg">สวัสดีครับ! ผมคือผู้ช่วย AI ของคุณ มีอะไรให้ผมช่วยเกี่ยวกับแผนสุขภาพของคุณในวันนี้ไหมครับ?</div>
+                    </div>
+                    <div class="mt-4 flex">
+                        <input type="text" id="chat-input" class="w-full p-3 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#C5A47E]" placeholder="พิมพ์คำถามของคุณที่นี่...">
+                        <button id="send-chat-btn" class="bg-[#C5A47E] text-white font-bold py-3 px-6 rounded-r-md hover:bg-opacity-90 transition-colors">ส่ง</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Workout Suggestion -->
+    <div id="suggestion-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-[#C5A47E]">✨ ท่าออกกำลังกายทางเลือก</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="suggestion-loader" class="hidden justify-center items-center my-4"><div class="loader"></div></div>
+            <div id="suggestion-result" class="text-gray-700"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.content-section');
+
+        function showTab(tabName) {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
+            contents.forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        import { API_KEY } from './config.js';
+        
+        async function callGemini(prompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                if (result.candidates && result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                }
+                return "ขออภัย, ไม่สามารถสร้างคำตอบได้ในขณะนี้";
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง";
+            }
+        }
+
+        // Feature 1: Recipe Generator
+        document.getElementById('generate-recipe-btn').addEventListener('click', async () => {
+            const ingredients = document.getElementById('ingredients-input').value.trim();
+            const resultDiv = document.getElementById('recipe-result');
+            const loader = document.getElementById('recipe-loader');
+            if (!ingredients) {
+                resultDiv.textContent = 'กรุณาใส่วัตถุดิบที่คุณมี';
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+            loader.style.display = 'flex';
+            resultDiv.classList.add('hidden');
+            const prompt = `You are a creative Thai chef specializing in healthy food. A user wants to make a meal for one person with the goal of fat loss and muscle gain. Their available ingredients are: "${ingredients}". Create a simple, delicious, and healthy Thai recipe with step-by-step instructions. The response MUST be in Thai language. Format the output with clear headings for 'ชื่อเมนู' (Menu Name), 'ส่วนผสม' (Ingredients), and 'วิธีทำ' (Instructions).`;
+            const result = await callGemini(prompt);
+            loader.style.display = 'none';
+            resultDiv.textContent = result;
+            resultDiv.classList.remove('hidden');
+        });
+
+        // Feature 2: Workout Suggestion
+        const modal = document.getElementById('suggestion-modal');
+        document.getElementById('workout').addEventListener('click', async (e) => {
+            if (e.target.classList.contains('suggest-btn')) {
+                const exerciseName = e.target.dataset.exercise;
+                modal.classList.remove('hidden');
+                document.getElementById('suggestion-result').innerHTML = '';
+                document.getElementById('suggestion-loader').style.display = 'flex';
+                const prompt = `You are a certified personal trainer. A user is looking for an alternative to the exercise "${exerciseName}". They have access to dumbbells, an adjustable bench, and standard gym machines (lat pulldown, leg press, etc.). Suggest one alternative exercise that targets the same primary muscle group. Provide the name of the exercise and a brief 1-2 sentence explanation of how to perform it. The response MUST be in Thai language.`;
+                const result = await callGemini(prompt);
+                document.getElementById('suggestion-loader').style.display = 'none';
+                document.getElementById('suggestion-result').innerHTML = result.replace(/\n/g, '<br>');
+            }
+        });
+        document.getElementById('close-modal-btn').addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        // Feature 3: AI Assistant Chat
+        const chatWindow = document.getElementById('chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat-btn');
+
+        const handleChatSend = async () => {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            // Display user message
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble-user p-3 rounded-lg max-w-lg';
+            userBubble.textContent = userMessage;
+            chatWindow.appendChild(userBubble);
+            chatInput.value = '';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            // Display loader
+            const loaderBubble = document.createElement('div');
+            loaderBubble.className = 'chat-bubble-ai p-3 rounded-lg max-w-lg flex items-center justify-center';
+            loaderBubble.innerHTML = '<div class="loader" style="width: 24px; height: 24px; border-width: 3px;"></div>';
+            chatWindow.appendChild(loaderBubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            // Call AI
+            const prompt = `You are a helpful and encouraging fitness and nutrition assistant for a user following a specific 3-month body recomposition plan. The user's details are: male, age 29, 66kg, 175cm. The plan involves a 4-day Upper/Lower split workout and calorie cycling (2500 kcal on workout days, 2000 kcal on rest days). Your primary goal is to answer the user's questions clearly and concisely, relating your answers back to their specific plan whenever possible. Keep responses supportive and in Thai. The user's question is: "${userMessage}"`;
+            const aiResponse = await callGemini(prompt);
+
+            // Display AI response
+            loaderBubble.remove();
+            const aiBubble = document.createElement('div');
+            aiBubble.className = 'chat-bubble-ai p-3 rounded-lg max-w-lg';
+            aiBubble.textContent = aiResponse;
+            chatWindow.appendChild(aiBubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        };
+        
+        sendChatBtn.addEventListener('click', handleChatSend);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleChatSend();
+            }
+        });
+
+    </script>
+
+</body>
+</html>
