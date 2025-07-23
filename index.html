@@ -337,8 +337,31 @@
         }
     </script>
 
-    <script type="module">
-        import { API_KEY } from './config.js';
+    <script>
+        let API_KEY = localStorage.getItem('gemini_api_key');
+        if (!API_KEY) {
+            // ถ้าไม่มี API key ใน localStorage ให้แสดง input form
+            const apiKeyForm = document.createElement('div');
+            apiKeyForm.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
+            apiKeyForm.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <h3 class="text-xl font-bold mb-4">กรุณาใส่ Gemini API Key</h3>
+                    <p class="text-sm text-gray-600 mb-4">คุณสามารถสร้าง API key ได้ที่ <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-500 underline">Google AI Studio</a></p>
+                    <input type="text" id="api-key-input" class="w-full p-2 border rounded mb-4" placeholder="ใส่ API key ของคุณที่นี่...">
+                    <button id="save-api-key" class="bg-[#C5A47E] text-white px-4 py-2 rounded">บันทึก</button>
+                </div>
+            `;
+            document.body.appendChild(apiKeyForm);
+            
+            document.getElementById('save-api-key').addEventListener('click', () => {
+                const input = document.getElementById('api-key-input');
+                if (input.value.trim()) {
+                    localStorage.setItem('gemini_api_key', input.value.trim());
+                    API_KEY = input.value.trim();
+                    apiKeyForm.remove();
+                }
+            });
+        }
 
         async function callGemini(prompt) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${API_KEY}`;
