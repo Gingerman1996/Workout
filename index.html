@@ -345,12 +345,31 @@
             apiKeyForm.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
             apiKeyForm.innerHTML = `
                 <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                    <h3 class="text-xl font-bold mb-4">กรุณาใส่ Gemini API Key</h3>
-                    <p class="text-sm text-gray-600 mb-4">คุณสามารถสร้าง API key ได้ที่ <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-500 underline">Google AI Studio</a></p>
-                    <input type="text" id="api-key-input" class="w-full p-2 border rounded mb-4" placeholder="ใส่ API key ของคุณที่นี่...">
-                    <button id="save-api-key" class="bg-[#C5A47E] text-white px-4 py-2 rounded">บันทึก</button>
+                    <h3 class="text-xl font-bold mb-4 text-[#4A4A4A]">เริ่มต้นใช้งาน AI Assistant</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-2">1. ไปที่ <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-500 underline">Google AI Studio</a></p>
+                            <p class="text-sm text-gray-600 mb-2">2. คลิก "Create API key" เพื่อสร้าง API key ใหม่</p>
+                            <p class="text-sm text-gray-600 mb-4">3. คัดลอก API key และวางลงในช่องด้านล่าง</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-2">API Key ของคุณ:</label>
+                            <input type="password" id="api-key-input" class="w-full p-3 border rounded-md mb-2" placeholder="วาง API key ที่นี่...">
+                            <div class="flex items-center mb-4">
+                                <input type="checkbox" id="show-key" class="mr-2">
+                                <label for="show-key" class="text-sm text-gray-600">แสดง API key</label>
+                            </div>
+                            <button id="save-api-key" class="w-full bg-[#C5A47E] text-white py-3 px-4 rounded-md hover:bg-opacity-90 transition-colors">บันทึกและเริ่มใช้งาน</button>
+                        </div>
+                    </div>
                 </div>
             `;
+
+            // เพิ่ม event listener สำหรับการแสดง/ซ่อน API key
+            apiKeyForm.querySelector('#show-key').addEventListener('change', (e) => {
+                const input = document.getElementById('api-key-input');
+                input.type = e.target.checked ? 'text' : 'password';
+            });
             document.body.appendChild(apiKeyForm);
             
             document.getElementById('save-api-key').addEventListener('click', () => {
