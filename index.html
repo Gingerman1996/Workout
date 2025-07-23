@@ -391,7 +391,28 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    if (response.status === 400 || response.status === 401 || response.status === 403) {
+                        localStorage.removeItem('gemini_api_key');
+                        const errorModal = document.createElement('div');
+                        errorModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
+                        errorModal.innerHTML = `
+                            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-bold text-red-500">❌ เกิดข้อผิดพลาด</h3>
+                                    <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                </div>
+                                <p class="text-gray-600 mb-4">API key ไม่ถูกต้องหรือหมดอายุ กรุณาลองใส่ API key ใหม่อีกครั้ง</p>
+                                <div class="flex justify-end">
+                                    <button class="bg-[#C5A47E] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors" onclick="location.reload();">ลองใหม่</button>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(errorModal);
+                        throw new Error('Invalid API key');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const result = await response.json();
                 if (result.candidates && result.candidates[0].content.parts.length > 0) {
                     return result.candidates[0].content.parts[0].text;
@@ -399,7 +420,22 @@
                 return "ขออภัย, ไม่สามารถสร้างคำตอบได้ในขณะนี้";
             } catch (error) {
                 console.error("Gemini API call failed:", error);
-                return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง";
+                const errorModal = document.createElement('div');
+                errorModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
+                errorModal.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-[#C5A47E]">✨ ท่าออกกำลังกายทางเลือก</h3>
+                            <button class="text-gray-500 hover:text-gray-800 text-2xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                        </div>
+                        <p class="text-gray-600 mb-4">เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง</p>
+                        <div class="flex justify-end">
+                            <button class="bg-[#C5A47E] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors" onclick="this.closest('.fixed').remove(); localStorage.removeItem('gemini_api_key'); location.reload();">ลองใหม่</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(errorModal);
+                return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI";
             }
         }
 
