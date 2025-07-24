@@ -31,6 +31,38 @@ function deleteRecipe(recipeId) {
     showNotification('ลบเมนูเรียบร้อยแล้ว');
 }
 
+function editRecipeName(recipeId) {
+    const recipes = getSavedRecipes();
+    const recipe = recipes.find(r => r.id === recipeId);
+    
+    if (!recipe) {
+        showNotification('ไม่พบเมนูที่ต้องการแก้ไข');
+        return;
+    }
+
+    const currentName = recipe.name || recipe.recipeName || 'เมนูไม่ระบุชื่อ';
+    
+    showInputModal(
+        'แก้ไขชื่อเมนู',
+        'กรุณาใส่ชื่อเมนูใหม่:',
+        currentName,
+        (newName) => {
+            if (newName && newName.trim()) {
+                recipe.name = newName.trim();
+                // Remove old recipeName property if exists
+                if (recipe.recipeName) {
+                    delete recipe.recipeName;
+                }
+                saveSavedRecipes(recipes);
+                renderSavedRecipes();
+                showNotification('แก้ไขชื่อเมนูเรียบร้อยแล้ว');
+            } else {
+                showNotification('กรุณาใส่ชื่อเมนู', true);
+            }
+        }
+    );
+}
+
 function renderSavedRecipes() {
     const container = document.getElementById('saved-recipes-container');
     const recipes = getSavedRecipes();
@@ -50,7 +82,14 @@ function renderSavedRecipes() {
         <div class="bg-gray-50 p-4 rounded-lg border">
             <div class="flex justify-between items-start mb-3">
                 <h3 class="font-semibold text-lg">${recipe.name || recipe.recipeName || 'เมนูไม่ระบุชื่อ'}</h3>
-                <button onclick="deleteRecipe(${recipe.id})" class="text-red-500 hover:text-red-700 text-sm">ลบ</button>
+                <div class="flex recipe-actions">
+                    <button onclick="editRecipeName(${recipe.id})" class="recipe-edit-btn text-blue-500 hover:text-blue-700" title="แก้ไขชื่อ">
+                        ✏️ แก้ไข
+                    </button>
+                    <button onclick="deleteRecipe(${recipe.id})" class="recipe-delete-btn text-red-500 hover:text-red-700" title="ลบเมนู">
+                        🗑️ ลบ
+                    </button>
+                </div>
             </div>
             
             ${recipe.instructions ? `

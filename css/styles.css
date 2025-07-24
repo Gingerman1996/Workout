@@ -69,3 +69,33 @@ details[open] > summary .arrow-down {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Recipe action buttons */
+.recipe-actions {
+    gap: 8px;
+}
+
+.recipe-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    border: 1px solid transparent;
+}
+
+.recipe-actions button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-color: currentColor;
+    transform: translateY(-1px);
+}
+
+.recipe-edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.recipe-delete-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}

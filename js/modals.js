@@ -41,11 +41,12 @@ function showChoiceModal(title, message, buttons) {
 function showInputModal(title, message, placeholder, callback) {
     inputTitle.textContent = title;
     inputMessage.textContent = message;
-    inputField.value = '';
-    inputField.placeholder = placeholder;
+    inputField.value = placeholder || '';
+    inputField.placeholder = placeholder || '';
     inputCallback = callback;
     inputModal.classList.remove('hidden');
     inputField.focus();
+    inputField.select(); // Select all text for easy editing
 }
 
 // Initialize modals
@@ -57,5 +58,26 @@ function initModals() {
     
     inputCancelBtn.addEventListener('click', () => {
         inputModal.classList.add('hidden');
+    });
+
+    // Handle Enter key in input field
+    inputField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (inputCallback) inputCallback(inputField.value.trim());
+            inputModal.classList.add('hidden');
+        }
+    });
+
+    // Handle Escape key for modal close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (!inputModal.classList.contains('hidden')) {
+                inputModal.classList.add('hidden');
+            }
+            if (!choiceModal.classList.contains('hidden')) {
+                choiceModal.classList.add('hidden');
+            }
+        }
     });
 }
