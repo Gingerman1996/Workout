@@ -1,0 +1,71 @@
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #FDFBF8;
+    color: #4A4A4A;
+}
+
+.tab-btn {
+    transition: all 0.3s ease;
+    border-bottom: 4px solid transparent;
+}
+
+.tab-btn.active {
+    color: #C5A47E;
+    border-bottom-color: #C5A47E;
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+details > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+    display: none;
+}
+
+details[open] > summary .arrow-down {
+    transform: rotate(180deg);
+}
+
+.arrow-down {
+    transition: transform 0.2s ease-in-out;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #C5A47E;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.chat-bubble-user {
+    background-color: #C5A47E;
+    color: white;
+    align-self: flex-end;
+}
+
+.chat-bubble-ai {
+    background-color: #f0f0f0;
+    color: #4A4A4A;
+    align-self: flex-start;
+}
+
+#notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
