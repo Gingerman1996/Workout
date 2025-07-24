@@ -218,12 +218,19 @@ function selectFood(foodId) {
         return;
     }
     
+    // Temporarily hide ingredients modal to show input modal on top
+    const ingredientsModal = document.getElementById('add-ingredients-modal');
+    ingredientsModal.style.display = 'none';
+    
     // Show input modal for amount
     showInputModal(
         'ระบุปริมาณ',
         `กรุณาใส่ปริมาณของ ${food.name} (หน่วย: ${food.serving.split(' ').slice(1).join(' ')})`,
         '1',
         (amount) => {
+            // Show ingredients modal again
+            ingredientsModal.style.display = 'flex';
+            
             const qty = parseFloat(amount);
             if (isNaN(qty) || qty <= 0) {
                 showNotification('กรุณาใส่ปริมาณที่ถูกต้อง', true);
@@ -246,6 +253,37 @@ function selectFood(foodId) {
             updateNutritionSummary();
         }
     );
+    
+    // Handle input modal close to show ingredients modal again
+    const handleInputModalClose = () => {
+        ingredientsModal.style.display = 'flex';
+        document.getElementById('input-modal').removeEventListener('click', handleBackdropClick);
+        document.removeEventListener('keydown', handleEscapeKey);
+    };
+    
+    const handleBackdropClick = (e) => {
+        if (e.target.id === 'input-modal') {
+            handleInputModalClose();
+        }
+    };
+    
+    const handleEscapeKey = (e) => {
+        if (e.key === 'Escape' && !document.getElementById('input-modal').classList.contains('hidden')) {
+            handleInputModalClose();
+        }
+    };
+    
+    // Add event listeners for input modal close
+    document.getElementById('input-modal').addEventListener('click', handleBackdropClick);
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    // Override input cancel button to show ingredients modal
+    const inputCancelBtn = document.getElementById('input-cancel-btn');
+    const originalCancelHandler = inputCancelBtn.onclick;
+    inputCancelBtn.onclick = () => {
+        handleInputModalClose();
+        if (originalCancelHandler) originalCancelHandler();
+    };
 }
 
 // Update selected ingredients list
@@ -381,11 +419,23 @@ function editIngredientAmount(recipeId, ingredientIndex) {
     
     const ingredient = recipe.ingredients[ingredientIndex];
     
+    // Temporarily hide ingredients modal if it's open
+    const ingredientsModal = document.getElementById('add-ingredients-modal');
+    const wasIngredientsModalOpen = !ingredientsModal.classList.contains('hidden');
+    if (wasIngredientsModalOpen) {
+        ingredientsModal.style.display = 'none';
+    }
+    
     showInputModal(
         'แก้ไขปริมาณ',
         `แก้ไขปริมาณของ ${ingredient.name} (หน่วย: ${ingredient.unit})`,
         ingredient.amount.toString(),
         (newAmount) => {
+            // Show ingredients modal again if it was open
+            if (wasIngredientsModalOpen) {
+                ingredientsModal.style.display = 'flex';
+            }
+            
             const qty = parseFloat(newAmount);
             if (isNaN(qty) || qty <= 0) {
                 showNotification('กรุณาใส่ปริมาณที่ถูกต้อง', true);
@@ -417,6 +467,39 @@ function editIngredientAmount(recipeId, ingredientIndex) {
             }
         }
     );
+    
+    // Handle input modal close to show ingredients modal again if needed
+    if (wasIngredientsModalOpen) {
+        const handleInputModalClose = () => {
+            ingredientsModal.style.display = 'flex';
+            document.getElementById('input-modal').removeEventListener('click', handleBackdropClick);
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+        
+        const handleBackdropClick = (e) => {
+            if (e.target.id === 'input-modal') {
+                handleInputModalClose();
+            }
+        };
+        
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape' && !document.getElementById('input-modal').classList.contains('hidden')) {
+                handleInputModalClose();
+            }
+        };
+        
+        // Add event listeners for input modal close
+        document.getElementById('input-modal').addEventListener('click', handleBackdropClick);
+        document.addEventListener('keydown', handleEscapeKey);
+        
+        // Override input cancel button to show ingredients modal
+        const inputCancelBtn = document.getElementById('input-cancel-btn');
+        const originalCancelHandler = inputCancelBtn.onclick;
+        inputCancelBtn.onclick = () => {
+            handleInputModalClose();
+            if (originalCancelHandler) originalCancelHandler();
+        };
+    }
 }
 
 // Remove ingredient from recipe
