@@ -300,59 +300,8 @@ function updateNutritionSummary() {
     document.getElementById('total-fat').textContent = Math.round(totalFat * 10) / 10;
 }
 
-// Save ingredients to recipe and continue adding
-function saveIngredientsToRecipe() {
-    if (selectedIngredients.length === 0) {
-        showNotification('กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ', true);
-        return;
-    }
-    
-    const recipes = getSavedRecipes();
-    const recipe = recipes.find(r => r.id === currentRecipeId);
-    
-    if (!recipe) {
-        showNotification('ไม่พบเมนูที่ต้องการเพิ่มวัตถุดิบ', true);
-        return;
-    }
-    
-    // Initialize ingredients array if doesn't exist
-    if (!recipe.ingredients) {
-        recipe.ingredients = [];
-    }
-    
-    // Add new ingredients (check for duplicates)
-    selectedIngredients.forEach(newIngredient => {
-        const existingIndex = recipe.ingredients.findIndex(ing => ing.id === newIngredient.id);
-        if (existingIndex >= 0) {
-            // Update existing ingredient amount
-            const existing = recipe.ingredients[existingIndex];
-            existing.amount += newIngredient.amount;
-            existing.calories += newIngredient.calories;
-            existing.protein += newIngredient.protein;
-            existing.carbs += newIngredient.carbs;
-            existing.fat += newIngredient.fat;
-        } else {
-            // Add new ingredient
-            recipe.ingredients.push({...newIngredient});
-        }
-    });
-    
-    // Update nutrition summary for the recipe
-    updateRecipeNutrition(recipe);
-    
-    saveSavedRecipes(recipes);
-    renderSavedRecipes();
-    
-    // Clear selected ingredients but keep modal open
-    selectedIngredients = [];
-    updateSelectedIngredientsList();
-    updateNutritionSummary();
-    
-    showNotification('เพิ่มวัตถุดิบในเมนูเรียบร้อยแล้ว สามารถเพิ่มวัตถุดิบต่อได้');
-}
-
 // Save ingredients to recipe and close modal
-function saveAndCloseIngredientsToRecipe() {
+function saveIngredientsToRecipe() {
     if (selectedIngredients.length === 0) {
         showNotification('กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ', true);
         return;
@@ -513,7 +462,6 @@ function initIngredientsModal() {
     const closeBtn = document.getElementById('close-ingredients-modal-btn');
     const cancelBtn = document.getElementById('cancel-ingredients-btn');
     const saveBtn = document.getElementById('save-ingredients-btn');
-    const saveAndCloseBtn = document.getElementById('save-and-close-ingredients-btn');
     const clearBtn = document.getElementById('clear-selected-ingredients');
     
     closeBtn.addEventListener('click', closeIngredientsModal);
@@ -521,8 +469,6 @@ function initIngredientsModal() {
     cancelBtn.addEventListener('click', closeIngredientsModal);
     
     saveBtn.addEventListener('click', saveIngredientsToRecipe);
-    
-    saveAndCloseBtn.addEventListener('click', saveAndCloseIngredientsToRecipe);
     
     clearBtn.addEventListener('click', () => {
         selectedIngredients = [];
