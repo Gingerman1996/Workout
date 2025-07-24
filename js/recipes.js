@@ -218,19 +218,12 @@ function selectFood(foodId) {
         return;
     }
     
-    // Temporarily hide ingredients modal to show input modal on top
-    const ingredientsModal = document.getElementById('add-ingredients-modal');
-    ingredientsModal.style.display = 'none';
-    
     // Show input modal for amount
     showInputModal(
         'ระบุปริมาณ',
         `กรุณาใส่ปริมาณของ ${food.name} (หน่วย: ${food.serving.split(' ').slice(1).join(' ')})`,
         '1',
         (amount) => {
-            // Show ingredients modal again
-            ingredientsModal.style.display = 'flex';
-            
             const qty = parseFloat(amount);
             if (isNaN(qty) || qty <= 0) {
                 showNotification('กรุณาใส่ปริมาณที่ถูกต้อง', true);
@@ -251,39 +244,9 @@ function selectFood(foodId) {
             selectedIngredients.push(ingredient);
             updateSelectedIngredientsList();
             updateNutritionSummary();
+            showNotification(`เพิ่ม ${food.name} แล้ว`);
         }
     );
-    
-    // Handle input modal close to show ingredients modal again
-    const handleInputModalClose = () => {
-        ingredientsModal.style.display = 'flex';
-        document.getElementById('input-modal').removeEventListener('click', handleBackdropClick);
-        document.removeEventListener('keydown', handleEscapeKey);
-    };
-    
-    const handleBackdropClick = (e) => {
-        if (e.target.id === 'input-modal') {
-            handleInputModalClose();
-        }
-    };
-    
-    const handleEscapeKey = (e) => {
-        if (e.key === 'Escape' && !document.getElementById('input-modal').classList.contains('hidden')) {
-            handleInputModalClose();
-        }
-    };
-    
-    // Add event listeners for input modal close
-    document.getElementById('input-modal').addEventListener('click', handleBackdropClick);
-    document.addEventListener('keydown', handleEscapeKey);
-    
-    // Override input cancel button to show ingredients modal
-    const inputCancelBtn = document.getElementById('input-cancel-btn');
-    const originalCancelHandler = inputCancelBtn.onclick;
-    inputCancelBtn.onclick = () => {
-        handleInputModalClose();
-        if (originalCancelHandler) originalCancelHandler();
-    };
 }
 
 // Update selected ingredients list
@@ -337,7 +300,7 @@ function updateNutritionSummary() {
     document.getElementById('total-fat').textContent = Math.round(totalFat * 10) / 10;
 }
 
-// Save ingredients to recipe
+// Save ingredients to recipe and continue adding
 function saveIngredientsToRecipe() {
     if (selectedIngredients.length === 0) {
         showNotification('กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ', true);
@@ -380,12 +343,68 @@ function saveIngredientsToRecipe() {
     saveSavedRecipes(recipes);
     renderSavedRecipes();
     
+    // Clear selected ingredients but keep modal open
+    selectedIngredients = [];
+    updateSelectedIngredientsList();
+    updateNutritionSummary();
+    
+    showNotification('เพิ่มวัตถุดิบในเมนูเรียบร้อยแล้ว สามารถเพิ่มวัตถุดิบต่อได้');
+}
+
+// Save ingredients to recipe and close modal
+function saveAndCloseIngredientsToRecipe() {
+    if (selectedIngredients.length === 0) {
+        showNotification('กรุณาเลือกวัตถุดิบอย่างน้อย 1 รายการ', true);
+        return;
+    }
+    
+    const recipes = getSavedRecipes();
+    const recipe = recipes.find(r => r.id === currentRecipeId);
+    
+    if (!recipe) {
+        showNotification('ไม่พบเมนูที่ต้องการเพิ่มวัตถุดิบ', true);
+        return;
+    }
+    
+    // Initialize ingredients array if doesn't exist
+    if (!recipe.ingredients) {
+        recipe.ingredients = [];
+    }
+    
+    // Add new ingredients (check for duplicates)
+    selectedIngredients.forEach(newIngredient => {
+        const existingIndex = recipe.ingredients.findIndex(ing => ing.id === newIngredient.id);
+        if (existingIndex >= 0) {
+            // Update existing ingredient amount
+            const existing = recipe.ingredients[existingIndex];
+            existing.amount += newIngredient.amount;
+            existing.calories += newIngredient.calories;
+            existing.protein += newIngredient.protein;
+            existing.carbs += newIngredient.carbs;
+            existing.fat += newIngredient.fat;
+        } else {
+            // Add new ingredient
+            recipe.ingredients.push({...newIngredient});
+        }
+    });
+    
+    // Update nutrition summary for the recipe
+    updateRecipeNutrition(recipe);
+    
+    saveSavedRecipes(recipes);
+    renderSavedRecipes();
+    
     // Close modal and reset
+    closeIngredientsModal();
+    
+    showNotification('เพิ่มวัตถุดิบในเมนูเรียบร้อยแล้ว');
+}
+
+// Close ingredients modal and reset
+function closeIngredientsModal() {
     document.getElementById('add-ingredients-modal').classList.add('hidden');
     currentRecipeId = null;
     selectedIngredients = [];
-    
-    showNotification('เพิ่มวัตถุดิบในเมนูเรียบร้อยแล้ว');
 }
 
 // Update recipe nutrition based on ingredients
@@ -419,23 +438,11 @@ function editIngredientAmount(recipeId, ingredientIndex) {
     
     const ingredient = recipe.ingredients[ingredientIndex];
     
-    // Temporarily hide ingredients modal if it's open
-    const ingredientsModal = document.getElementById('add-ingredients-modal');
-    const wasIngredientsModalOpen = !ingredientsModal.classList.contains('hidden');
-    if (wasIngredientsModalOpen) {
-        ingredientsModal.style.display = 'none';
-    }
-    
     showInputModal(
         'แก้ไขปริมาณ',
         `แก้ไขปริมาณของ ${ingredient.name} (หน่วย: ${ingredient.unit})`,
         ingredient.amount.toString(),
         (newAmount) => {
-            // Show ingredients modal again if it was open
-            if (wasIngredientsModalOpen) {
-                ingredientsModal.style.display = 'flex';
-            }
-            
             const qty = parseFloat(newAmount);
             if (isNaN(qty) || qty <= 0) {
                 showNotification('กรุณาใส่ปริมาณที่ถูกต้อง', true);
@@ -467,39 +474,6 @@ function editIngredientAmount(recipeId, ingredientIndex) {
             }
         }
     );
-    
-    // Handle input modal close to show ingredients modal again if needed
-    if (wasIngredientsModalOpen) {
-        const handleInputModalClose = () => {
-            ingredientsModal.style.display = 'flex';
-            document.getElementById('input-modal').removeEventListener('click', handleBackdropClick);
-            document.removeEventListener('keydown', handleEscapeKey);
-        };
-        
-        const handleBackdropClick = (e) => {
-            if (e.target.id === 'input-modal') {
-                handleInputModalClose();
-            }
-        };
-        
-        const handleEscapeKey = (e) => {
-            if (e.key === 'Escape' && !document.getElementById('input-modal').classList.contains('hidden')) {
-                handleInputModalClose();
-            }
-        };
-        
-        // Add event listeners for input modal close
-        document.getElementById('input-modal').addEventListener('click', handleBackdropClick);
-        document.addEventListener('keydown', handleEscapeKey);
-        
-        // Override input cancel button to show ingredients modal
-        const inputCancelBtn = document.getElementById('input-cancel-btn');
-        const originalCancelHandler = inputCancelBtn.onclick;
-        inputCancelBtn.onclick = () => {
-            handleInputModalClose();
-            if (originalCancelHandler) originalCancelHandler();
-        };
-    }
 }
 
 // Remove ingredient from recipe
@@ -539,25 +513,27 @@ function initIngredientsModal() {
     const closeBtn = document.getElementById('close-ingredients-modal-btn');
     const cancelBtn = document.getElementById('cancel-ingredients-btn');
     const saveBtn = document.getElementById('save-ingredients-btn');
+    const saveAndCloseBtn = document.getElementById('save-and-close-ingredients-btn');
     const clearBtn = document.getElementById('clear-selected-ingredients');
     
-    closeBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        currentRecipeId = null;
-        selectedIngredients = [];
-    });
+    closeBtn.addEventListener('click', closeIngredientsModal);
     
-    cancelBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        currentRecipeId = null;
-        selectedIngredients = [];
-    });
+    cancelBtn.addEventListener('click', closeIngredientsModal);
     
     saveBtn.addEventListener('click', saveIngredientsToRecipe);
+    
+    saveAndCloseBtn.addEventListener('click', saveAndCloseIngredientsToRecipe);
     
     clearBtn.addEventListener('click', () => {
         selectedIngredients = [];
         updateSelectedIngredientsList();
         updateNutritionSummary();
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeIngredientsModal();
+        }
     });
 }
