@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initRecipeGeneration();
     initExerciseSuggestion();
     initAIChat();
+    initIngredientsModal();
     
     // Load initial data
     renderCustomFoods();

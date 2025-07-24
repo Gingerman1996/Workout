@@ -531,6 +531,53 @@
     </div>
 
 
+    <!-- Modal for Adding Ingredients to Recipe -->
+    <div id="add-ingredients-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-[#C5A47E]">เพิ่มวัตถุดิบจากคลังอาหาร</h3>
+                <button id="close-ingredients-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6 h-full">
+                <!-- Food Database List -->
+                <div class="lg:w-1/2 border-b lg:border-b-0 lg:border-r pb-4 lg:pb-0 lg:pr-4">
+                    <h4 class="font-semibold mb-3">คลังอาหาร</h4>
+                    <div class="space-y-2 max-h-80 lg:max-h-96 overflow-y-auto" id="ingredients-food-list">
+                        <!-- Food items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Selected Ingredients -->
+                <div class="lg:w-1/2 lg:pl-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="font-semibold">วัตถุดิบที่เลือก</h4>
+                        <button id="clear-selected-ingredients" class="text-sm text-red-500 hover:text-red-700">ล้างทั้งหมด</button>
+                    </div>
+                    <div class="space-y-2 max-h-64 lg:max-h-72 overflow-y-auto" id="selected-ingredients-list">
+                        <!-- Selected ingredients will be populated here -->
+                    </div>
+                    
+                    <!-- Nutrition Summary -->
+                    <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                        <h5 class="font-medium mb-2">สรุปโภชนาการรวม</h5>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div>พลังงาน: <span id="total-calories">0</span> kcal</div>
+                            <div>โปรตีน: <span id="total-protein">0</span> g</div>
+                            <div>คาร์บ: <span id="total-carbs">0</span> g</div>
+                            <div>ไขมัน: <span id="total-fat">0</span> g</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
+                        <button id="cancel-ingredients-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300">ยกเลิก</button>
+                        <button id="save-ingredients-btn" class="bg-[#C5A47E] text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90">เพิ่มลงในเมนู</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Custom Notification -->
     <div id="notification" class="fixed bottom-5 right-5 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg transition-transform duration-300 transform translate-y-20 opacity-0 z-50">
         <p id="notification-message"></p>
